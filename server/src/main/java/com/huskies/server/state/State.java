@@ -4,19 +4,18 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.huskies.server.districtPlan.DistrictPlan;
 
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity(name = "State")
-@JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
-@Table(name = "states")
+@Document("state")
 public class State {
-    @Id private String id;
-
-    @OneToMany(mappedBy = "state", cascade = {CascadeType.ALL})
+    @Id
+    private String id;
     private Set<DistrictPlan> plans;
+    private String geoid;
     public State() {}
 
     public State(String id) {
@@ -38,5 +37,13 @@ public class State {
 
     public void setPlans(Set<DistrictPlan> plans) {
         this.plans = plans;
+    }
+
+    public String getGeoid() {
+        return geoid;
+    }
+
+    public void setGeoid(String geoid) {
+        this.geoid = geoid;
     }
 }

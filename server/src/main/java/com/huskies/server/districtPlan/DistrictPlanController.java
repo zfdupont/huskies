@@ -1,6 +1,5 @@
 package com.huskies.server.districtPlan;
 
-import com.huskies.server.precinct.PrecinctService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -9,11 +8,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/plan")
 public class DistrictPlanController {
 
     @Autowired DistrictPlanService districtPlanService;
-    @Autowired PrecinctService precinctService;
     @PatchMapping (value = "/precinct", consumes = MediaType.ALL_VALUE)
     @ResponseBody
     public int patchPrecinct(@RequestBody Map<String, String> json){
@@ -46,5 +44,10 @@ public class DistrictPlanController {
         int latino = Integer.parseInt(json.getOrDefault("latino", "0"));
         int indian = Integer.parseInt(json.getOrDefault("native", "0"));
 
+    }
+
+    @GetMapping(value = "/summary", consumes = MediaType.ALL_VALUE)
+    public Map<String, Double> getSummary(@RequestBody String name){
+        return null;
     }
 }

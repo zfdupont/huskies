@@ -1,39 +1,27 @@
 package com.huskies.server.districtPlan;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.huskies.server.district.District;
 
-import com.huskies.server.state.State;
-import jakarta.persistence.*;
+
+import com.huskies.server.district.District;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity(name = "DistrictPlan")
-@JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
-@Table(name = "district_plans")
+@Document("districtplan")
 public class DistrictPlan {
-    @Id @GeneratedValue( strategy = GenerationType.UUID ) private String id;
-    @OneToMany(mappedBy = "districtPlan")
-    Set<District> districts;
+    @Id
+    private String id;
+    private Set<District> districts;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private State state;
-
-    @Column(name = "name", unique = true) private String name;
+    private String name;
 
     public DistrictPlan() {}
 
     public DistrictPlan(String name) {
         this.name = name;
         this.districts = new HashSet<>();
-    }
-
-    public DistrictPlan(String id, Set<District> districts, String name) {
-        this.id = id;
-        this.districts = districts;
-        this.name = name;
     }
 
     public String getId() {
@@ -58,13 +46,5 @@ public class DistrictPlan {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public State getState() {
-        return state;
-    }
-
-    public void setState(State state) {
-        this.state = state;
     }
 }

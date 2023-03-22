@@ -35,6 +35,16 @@ class GeometryPOJO {
         }
 //        this.coordinates = new ArrayList<>(coordinates);
     }
+
+    public GeometryPOJO() {}
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setCoordinates(List<Double[]> coordinates) {
+        this.coordinates = coordinates;
+    }
 }
 class FeaturePOJO {
     public String type;
@@ -48,19 +58,28 @@ class FeaturePOJO {
         Collection<Object> p = feature.getAttributes();
         this.properties = new HashMap<>();
     }
+
+    public FeaturePOJO() {}
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setGeometry(GeometryPOJO geometry) {
+        this.geometry = geometry;
+    }
+
+    public void setProperties(Map<String, Object> properties) {
+        this.properties = properties;
+    }
 }
 public class FeatureCollectionPOJO {
     public String type;
-    public List<FeaturePOJO> features;
-    public FeatureCollectionPOJO(FeatureCollection<SimpleFeatureType, SimpleFeature> collection) {
-        this.type = "FeatureCollection";
-        this.features = new ArrayList<FeaturePOJO>();
-        FeatureIterator<SimpleFeature> it = collection.features();
-        while(it.hasNext()){
-            SimpleFeature feature = it.next();
-            FeaturePOJO f = new FeaturePOJO(feature);
-            this.features.add(f);
-        }
+    public HashMap<String, Object> crs;
+
+    public ArrayList<HashMap<String, Object>> features;
+
+    public FeatureCollectionPOJO() {
     }
 
     @Override
