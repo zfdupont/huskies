@@ -1,38 +1,29 @@
 package com.huskies.server.district;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.huskies.server.districtPlan.DistrictPlan;
-import com.huskies.server.precinct.Precinct;
-import com.huskies.server.state.State;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import jakarta.persistence.*;
-
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
-@Entity(name = "District")
-@JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
-@Table(name = "districts")
+@Document("district")
 public class District {
 
-    @Id private String id;
-    @OneToMany(mappedBy = "district")
-    private Set<Precinct> precincts;
+    @Id
+    private String id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private DistrictPlan districtPlan;
+    private String geoid;
+
+    private Map<String, Integer> election, pop;
 
     public District() {}
 
     public District(String id) {
         this.id = id;
-        this.precincts = new HashSet<>();
-    }
-
-    public District(String id, Set<Precinct> precincts) {
-        this.id = id;
-        this.precincts = precincts;
+        this.election = new HashMap<>();
+        this.pop = new HashMap<>();
     }
 
     public String getId() {
@@ -43,23 +34,27 @@ public class District {
         this.id = id;
     }
 
-    public Set<Precinct> getPrecincts() {
-        return precincts;
+    public String getGeoid() {
+        return geoid;
     }
 
-    public void setPrecincts(Set<Precinct> precincts) {
-        this.precincts = precincts;
+    public void setGeoid(String geoid) {
+        this.geoid = geoid;
     }
 
-    public void addPrecinct(Precinct precinct){
-        this.precincts.add(precinct);
+    public Map<String, Integer> getElection() {
+        return election;
     }
 
-    public DistrictPlan getDistrictPlan() {
-        return districtPlan;
+    public void setElection(Map<String, Integer> election) {
+        this.election = election;
     }
 
-    public void setDistrictPlan(DistrictPlan districtPlan) {
-        this.districtPlan = districtPlan;
+    public Map<String, Integer> getPop() {
+        return pop;
+    }
+
+    public void setPop(Map<String, Integer> pop) {
+        this.pop = pop;
     }
 }
