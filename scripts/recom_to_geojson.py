@@ -1,4 +1,3 @@
-#pip install numpy pandas shapely fiona pyproj packaging geopandas maup rtree gerrychain
 import pandas
 import geopandas as gpd
 from rtree import index
@@ -11,6 +10,7 @@ from functools import partial
 import geopandas as gpd
 import matplotlib.pyplot as plt
 import numpy as np
+import shapely
 #read the geojson file, change crs for feet distances
 print("reading")
 gdf = gpd.read_file('./mergedIL.geojson')
@@ -79,28 +79,16 @@ chain = MarkovChain(
     initial_state=initial_partition,
     total_steps=100
 )
+for state in chain:
+    pass
 
-data = pandas.DataFrame(
-    sorted(partition["PRE20"].percents("Democratic"))
-    for partition in chain
-)
+final_plan = chain.state
 
-fig, ax = plt.subplots(figsize=(8, 6))
-
-# Draw 50% line
-ax.axhline(0.5, color="#cccccc")
-
-# Draw boxplot
-data.boxplot(ax=ax, positions=range(len(data.columns)))
-
-# Draw initial plan's Democratic vote %s (.iloc[0] gives the first row)
-plt.plot(data.iloc[0], "ro")
-
-# Annotate
-ax.set_title("Comparing the 2021 plan to an ensemble")
-ax.set_ylabel("Democratic vote % (President 2020)")
-ax.set_xlabel("Sorted districts")
-ax.set_ylim(0, 1)
-ax.set_yticks([0, 0.25, 0.5, 0.75, 1])
-
-plt.show()
+new_districts = [0 for x in range(len(gdf))]
+for i in range(len(final_plan)):
+  for j in final_plan.parts[i]:
+    new_districts[j] = i
+gdf["new_districts"] = new_districts
+gdf.set_geometry("geometry")
+gdf_new = gdf.dissolve(by='new_districts')
+gdf_new.to_file("district_plan.geojson", driver="GeoJSON")
