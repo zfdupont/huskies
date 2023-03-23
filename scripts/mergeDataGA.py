@@ -2,8 +2,9 @@
 import pandas as pd
 import geopandas as gpd
 import maup
+import asyncio
 
-def merge():
+async def merge():
     #reading boundary data, filter out name, geoid, and geometry
     pth = './data/GA/ga_vtd_2020_bound.shp'
     gdf = gpd.read_file(pth)
@@ -32,4 +33,4 @@ def merge():
     gdf.to_file('mergedGA.geojson', driver='GeoJSON')
 
 if __name__ == '__main__':
-    merge()
+    asyncio.run(merge())
