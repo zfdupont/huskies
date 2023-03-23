@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 
 @RestController
@@ -23,13 +24,10 @@ public class StateController {
     }
 
     @GetMapping(value="/states/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public FeatureCollectionPOJO getState(@PathVariable String name){
+    public FeatureCollectionPOJO getState(@PathVariable String name) throws IOException {
         // returns a single state
-        try {
             return stateService.loadJson(name);
-        } catch (Exception e){
-            return null;
-        }
+
 
     }
 
