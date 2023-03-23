@@ -8,7 +8,7 @@ async def merge():
     #reading boundary data, filter out name, geoid, and geometry
     pth = './data/GA/ga_vtd_2020_bound.shp'
     gdf = gpd.read_file(pth)
-    gdf = gdf[['NAME20','GEOID20','geometry']]
+    gdf = gdf[['NAME20','GEOID20','ALAND20','geometry']]
     #reading election data, filter out geoid, votes for Trump and Biden
     edata = pd.read_csv("./data/GA/ga_2020_2020_vtd.csv")
     edata = edata[['GEOID20','G20PRERTRU','G20PREDBID']]
@@ -29,7 +29,14 @@ async def merge():
     #assign district boundaries to 
     assignments = maup.assign(gdf, gdf2)
     gdf['district_id'] = assignments
-
+    #get 2020 district bounds
+    gdf3 = gpd.read_file('./data/GA/ga_cong_2011_to_2021.shp')
+    #make crs match
+    if gdf.crs != gdf3.crs:
+        gdf = gdf.to_crs(gdf3.crs)
+    #assign district boundaries to 
+    assignments2 = maup.assign(gdf, gdf3)
+    gdf['district_id_2020'] = assignments2
     gdf.to_file('mergedGA.geojson', driver='GeoJSON')
 
 if __name__ == '__main__':
