@@ -22,14 +22,13 @@ async def merge():
     gdf['GEOID20']=gdf['GEOID20'].astype(np.int64)
     gdf  = edata.merge(gdf, on='GEOID20', how='left')
     gdf  = ddata.merge(gdf, on='GEOID20', how='left')
-
     #convert dataframe to geojson
     gdf = gdf.rename(columns={'R_2020_pres': '2020VTRUMP', 'D_2020_pres': '2020VBIDEN','TOTAL_ADJ':'POPTOT', 'TOTAL_VAP_ADJ':'VAPTOTAL', 'WHITE_VAP_ADJ':'VAPWHITE', 'BLACK_VAP_ADJ':'VAPBLACK','AMIND_VAP_ADJ':'VAPINAMORAK','ASIAN_VAP_ADJ':'VAPASIAN','HWN_VAP_ADJ':'VAPISLAND','OTHER_VAP_ADJ':'VAPOTHER','MULTI_VAP_ADJ':'VAPMIXED','HISP_VAP_ADJ':'VAPHISP'})
     gdf = gpd.GeoDataFrame(gdf, geometry='geometry')
     gdf2 = gpd.read_file(f'{src_path}/data/NY/CON22_June_03_2022.shp')
     #make crs match
     if gdf.crs != gdf2.crs:
-        gdf = gdf.to_crs(gdf2.crs)
+        gdf2 = gdf2.to_crs(gdf.crs)
     #assign district boundaries to 
     assignments = maup.assign(gdf, gdf2)
     gdf['district_id'] = assignments
