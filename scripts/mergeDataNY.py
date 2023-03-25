@@ -25,6 +25,8 @@ async def merge():
     #convert dataframe to geojson
     gdf = gdf.rename(columns={'R_2020_pres': '2020VTRUMP', 'D_2020_pres': '2020VBIDEN','TOTAL_ADJ':'POPTOT', 'TOTAL_VAP_ADJ':'VAPTOTAL', 'WHITE_VAP_ADJ':'VAPWHITE', 'BLACK_VAP_ADJ':'VAPBLACK','AMIND_VAP_ADJ':'VAPINAMORAK','ASIAN_VAP_ADJ':'VAPASIAN','HWN_VAP_ADJ':'VAPISLAND','OTHER_VAP_ADJ':'VAPOTHER','MULTI_VAP_ADJ':'VAPMIXED','HISP_VAP_ADJ':'VAPHISP'})
     gdf = gpd.GeoDataFrame(gdf, geometry='geometry')
+    gdf = gdf.drop(7041, axis=0)
+    gdf = gdf.reset_index(drop=True)
     gdf2 = gpd.read_file(f'{src_path}/data/NY/CON22_June_03_2022.shp')
     #make crs match
     if gdf.crs != gdf2.crs:
