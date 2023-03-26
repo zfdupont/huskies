@@ -31,17 +31,17 @@ async def merge():
     assignments = maup.assign(gdf, gdf2)
     gdf['district_id'] = assignments
     # #get 2020 district bounds
-    # gdf3 = gpd.read_file('./data/GA/ga_cong_2011_to_2021.shp')
+    gdf3 = gpd.read_file('./data/GA/ga_cong_2011_to_2021.shp')
     # #make crs match
-    # if gdf.crs != gdf3.crs:
-    #     gdf = gdf.to_crs(gdf3.crs)
+    if gdf.crs != gdf3.crs:
+        gdf = gdf.to_crs(gdf3.crs)
     # #assign district boundaries to 
-    # assignments2 = maup.assign(gdf, gdf3)
-    # gdf['district_id_2020'] = assignments2
-    gdf = gdf.dissolve(by='district_id',
-                       aggfunc={
-                           key: 'sum' for key in filter(lambda x: x in "POPTOT  VAPTOTAL  VAPWHITE  VAPBLACK  VAPINAMORAK  VAPASIAN  VAPISLAND  VAPOTHER  VAPMIXED  VAPHISP  2020VTRUMP  2020VBIDEN".split(), list(gdf.columns))
-                       })
+    assignments2 = maup.assign(gdf, gdf3)
+    gdf['district_id_2020'] = assignments2
+    #gdf = gdf.dissolve(by='district_id',
+    #                   aggfunc={
+    #                       key: 'sum' for key in filter(lambda x: x in "POPTOT  VAPTOTAL  VAPWHITE  VAPBLACK  VAPINAMORAK  VAPASIAN  VAPISLAND  VAPOTHER  VAPMIXED  VAPHISP  2020VTRUMP  2020VBIDEN".split(), list(gdf.columns))
+    #                   })
     gdf.to_file('mergedGA.geojson', driver='GeoJSON')
 
 if __name__ == '__main__':
