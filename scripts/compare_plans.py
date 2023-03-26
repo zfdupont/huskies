@@ -55,7 +55,7 @@ def compare_plans(dataPath, plan1, plan2):
         gdf[prop] = l
     gdf.to_file('district_compared.geojson', driver='GeoJSON')
 if __name__ == '__main__':
-    dataPath = sys.argv[1]
-    plan1 = sys.argv[2]
-    plan2 = sys.argv[3]
-    compare_plans(dataPath, plan1, plan2)
+    args = []
+    args.append(["./mergedGA.geojson", "district_id_2020", "district_id"])
+    for x in args:
+        compare_plans(x[0], x[1], x[2])
