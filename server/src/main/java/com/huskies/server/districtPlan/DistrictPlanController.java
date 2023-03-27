@@ -1,10 +1,12 @@
 package com.huskies.server.districtPlan;
 
+import com.huskies.server.FeatureCollectionPOJO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.Map;
 
 @RestController
@@ -46,6 +48,12 @@ public class DistrictPlanController {
 
     }
 
+    @GetMapping(value = "/plan", consumes = MediaType.ALL_VALUE)
+    public FeatureCollectionPOJO getPlan(@RequestBody Map<String, String> body) throws IOException {
+        String state = body.get("state");
+        String plan = body.get("plan");
+        return districtPlanService.loadJson(state, plan);
+    }
     @GetMapping(value = "/summary", consumes = MediaType.ALL_VALUE)
     public Map<String, Double> getSummary(@RequestBody String name){
         return null;

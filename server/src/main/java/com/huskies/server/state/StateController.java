@@ -26,9 +26,8 @@ public class StateController {
     @GetMapping(value="/states/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
     public FeatureCollectionPOJO getState(@PathVariable String name) throws IOException {
         // returns a single state
-            return stateService.loadJson(name);
-
-
+//            return stateService.loadJson(name)
+        return null;
     }
 
 }

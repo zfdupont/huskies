@@ -20,14 +20,4 @@ import java.util.*;
 public class StateService {
     @Autowired StateRepository stateRepo;
     @Autowired DistrictRepository districtRepo;
-
-
-    public FeatureCollectionPOJO loadJson(String stateName) throws IOException {
-        Path currentRelativePath = Paths.get("");
-        String jsonPath = String.format("%s/scripts/merged%s.geojson", currentRelativePath.toAbsolutePath(), stateName);
-        byte[] jsonData = Files.readAllBytes(Paths.get(jsonPath));
-        ObjectMapper objectMapper = new ObjectMapper();
-        FeatureCollectionPOJO f = objectMapper.readValue(jsonData, FeatureCollectionPOJO.class);
-        return f;
-    }
 }
