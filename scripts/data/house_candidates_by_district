@@ -1,0 +1,499 @@
+year,state,district,name,party,votes,incumbent
+2022,New York,25,Joseph Morelle,D / Working Families Party,"148,681",True
+2022,New York,25,Ron Singletary,R / Conservative Party,"128,502",False
+2022,New York,25,,Other,125,False
+2022,New York,19,Marcus Molinaro,R / Conservative Party,"142,923",False
+2022,New York,19,Josh Riley,D / Working Families Party,"136,789",False
+2022,New York,19,,Other,100,False
+2022,New York,2,Andrew Garbarino,R / Conservative Party,"148,613",True
+2022,New York,2,Jackie Gordon,D / Working Families Party,"95,183",False
+2022,New York,2,,Other,317,False
+2022,New York,14,Cortez,D / Working Families Party,"117,575",True
+2022,New York,14,Tina Forte,R,"44,240",False
+2022,New York,14,Desi Cuellar,Conservative Party,"3,118",False
+2022,New York,6,Grace Meng,D,"79,506",True
+2022,New York,6,Thomas Zmich,R / Conservative Party / Medical Freedom Party,"46,188",False
+2022,New York,6,,Other,117,False
+2022,New York,9,Yvette D. Clarke,D / Working Families Party,"111,162",True
+2022,New York,9,Menachem Raitport,Conservative Party,"24,143",False
+2022,New York,9,,Other,340,False
+2022,New York,14,Cortez,D / Working Families Party,"117,575",True
+2022,New York,14,Tina Forte,R,"44,240",False
+2022,New York,14,Desi Cuellar,Conservative Party,"3,118",False
+2022,New York,22,Brandon Williams,R / Conservative Party,"132,762",False
+2022,New York,22,Francis Conole,D,"128,837",False
+2022,New York,22,,Other,152,False
+2022,New York,16,Jamaal Bowman,D / Working Families Party,"125,727",True
+2022,New York,16,Miriam Levitt Flisser,R,"69,722",False
+2022,New York,16,,Other,144,False
+2022,New York,23,Nicholas A. Langworthy,R / Conservative Party,"189,022",False
+2022,New York,23,Max Della Pia,D,"101,643",False
+2022,New York,23,,Other,218,False
+2022,New York,6,Grace Meng,D,"79,506",True
+2022,New York,6,Thomas Zmich,R / Conservative Party / Medical Freedom Party,"46,188",False
+2022,New York,6,,Other,117,False
+2022,New York,1,Nicholas J. LaLota,R / Conservative Party,"173,275",False
+2022,New York,1,Bridget M. Fleming,D / Working Families Party,"136,899",False
+2022,New York,1,,Other,298,False
+2022,New York,25,Joseph Morelle,D / Working Families Party,"148,681",True
+2022,New York,25,Ron Singletary,R / Conservative Party,"128,502",False
+2022,New York,25,,Other,125,False
+2022,New York,26,Brian Higgins,D / Working Families Party,"152,983",True
+2022,New York,26,Steven Sams,R / Conservative Party,"86,822",False
+2022,New York,26,,Other,146,False
+2022,New York,7,Nydia Velazquez,D / Working Families Party,"134,066",True
+2022,New York,7,Juan Pagan,R / Conservative Party,"30,262",False
+2022,New York,7,,Other,216,False
+2022,New York,16,Jamaal Bowman,D / Working Families Party,"125,727",True
+2022,New York,16,Miriam Levitt Flisser,R,"69,722",False
+2022,New York,16,,Other,144,False
+2022,New York,1,Nicholas J. LaLota,R / Conservative Party,"173,275",False
+2022,New York,1,Bridget M. Fleming,D / Working Families Party,"136,899",False
+2022,New York,1,,Other,298,False
+2022,New York,15,Ritchie Torres,D,"72,610",True
+2022,New York,15,Stylo A. Sapaskis,R,"15,265",False
+2022,New York,21,Elise Stefanik,R / Conservative Party,"164,054",True
+2022,New York,21,Matt Castelli,D / Moderate Party,"110,483",False
+2022,New York,21,,Other,96,False
+2022,New York,5,Gregory W. Meeks,D,"97,981",True
+2022,New York,5,Paul King,R / Conservative Party,"32,393",False
+2022,New York,26,Brian Higgins,D / Working Families Party,"152,983",True
+2022,New York,26,Steven Sams,R / Conservative Party,"86,822",False
+2022,New York,26,,Other,146,False
+2022,New York,10,Daniel Goldman,D,"197,202",False
+2022,New York,10,Benine Hamdan,R / Conservative Party,"34,646",False
+2022,New York,10,Steve Speer,Medical Freedom Party,"1,863",False
+2022,New York,13,Adriano Espaillat,D,"116,589",True
+2022,New York,13,Odell Patterson,Independent,0,False
+2022,New York,13,,Other,"1,257",False
+2022,New York,4,Esposito,R / Conservative Party,"137,899",False
+2022,New York,4,Laura Gillen,D,"127,748",False
+2022,New York,4,,Other,66,False
+2022,New York,10,Daniel Goldman,D,"197,202",False
+2022,New York,10,Benine Hamdan,R / Conservative Party,"34,646",False
+2022,New York,10,Steve Speer,Medical Freedom Party,"1,863",False
+2022,New York,23,Nicholas A. Langworthy,R / Conservative Party,"189,022",False
+2022,New York,23,Max Della Pia,D,"101,643",False
+2022,New York,23,,Other,218,False
+2022,New York,4,Esposito,R / Conservative Party,"137,899",False
+2022,New York,4,Laura Gillen,D,"127,748",False
+2022,New York,4,,Other,66,False
+2022,New York,19,Marcus Molinaro,R / Conservative Party,"142,923",False
+2022,New York,19,Josh Riley,D / Working Families Party,"136,789",False
+2022,New York,19,,Other,100,False
+2022,New York,21,Elise Stefanik,R / Conservative Party,"164,054",True
+2022,New York,21,Matt Castelli,D / Moderate Party,"110,483",False
+2022,New York,21,,Other,96,False
+2022,New York,18,Pat Ryan,D / Working Families Party,"131,460",True
+2022,New York,18,Colin Schmitt,R / Conservative Party,"129,379",False
+2022,New York,18,,Other,148,False
+2022,New York,8,Hakeem Jeffries,D,"93,295",True
+2022,New York,8,Yuri Dashevsky,R / Conservative Party,"35,486",False
+2022,New York,8,,Other,173,False
+2022,New York,24,Claudia Tenney,R / Conservative Party,"177,901",True
+2022,New York,24,Steven Holden,D,"91,703",False
+2022,New York,24,,Other,164,False
+2022,New York,8,Hakeem Jeffries,D,"93,295",True
+2022,New York,8,Yuri Dashevsky,R / Conservative Party,"35,486",False
+2022,New York,8,,Other,173,False
+2022,New York,12,Jerrold Nadler,D / Working Families Party,"186,357",True
+2022,New York,12,Mike Zumbluskas,R / Conservative Party / Parent Party,"41,264",False
+2022,New York,12,Mikhail Itkis,Itkis Campaign,583,False
+2022,New York,18,Pat Ryan,D / Working Families Party,"131,460",True
+2022,New York,18,Colin Schmitt,R / Conservative Party,"129,379",False
+2022,New York,18,,Other,148,False
+2022,New York,22,Brandon Williams,R / Conservative Party,"132,762",False
+2022,New York,22,Francis Conole,D,"128,837",False
+2022,New York,22,,Other,152,False
+2022,New York,24,Claudia Tenney,R / Conservative Party,"177,901",True
+2022,New York,24,Steven Holden,D,"91,703",False
+2022,New York,24,,Other,164,False
+2022,New York,5,Gregory W. Meeks,D,"97,981",True
+2022,New York,5,Paul King,R / Conservative Party,"32,393",False
+2022,New York,13,Adriano Espaillat,D,"116,589",True
+2022,New York,13,Odell Patterson,Independent,0,False
+2022,New York,13,,Other,"1,257",False
+2022,New York,20,Paul Tonko,D / Working Families Party,"156,355",True
+2022,New York,20,Elizabeth Joy,R / Conservative Party,"128,970",False
+2022,New York,20,,Other,138,False
+2022,New York,11,Nicole Malliotakis,R / Conservative Party,"124,902",True
+2022,New York,11,Max Rose,D,"80,093",False
+2022,New York,12,Jerrold Nadler,D / Working Families Party,"186,357",True
+2022,New York,12,Mike Zumbluskas,R / Conservative Party / Parent Party,"41,264",False
+2022,New York,12,Mikhail Itkis,Itkis Campaign,583,False
+2022,New York,17,Michael Lawler,R / Conservative Party,"140,883",False
+2022,New York,17,Sean Maloney,D / Working Families Party,"137,633",True
+2022,New York,17,,Other,145,False
+2022,New York,7,Nydia Velazquez,D / Working Families Party,"134,066",True
+2022,New York,7,Juan Pagan,R / Conservative Party,"30,262",False
+2022,New York,7,,Other,216,False
+2022,New York,9,Yvette D. Clarke,D / Working Families Party,"111,162",True
+2022,New York,9,Menachem Raitport,Conservative Party,"24,143",False
+2022,New York,9,,Other,340,False
+2022,New York,3,Santos,R / Conservative Party,"142,017",False
+2022,New York,3,Robert Zimmerman,D / Working Families Party,"120,060",False
+2022,New York,3,,Other,92,False
+2022,New York,3,Santos,R / Conservative Party,"142,017",False
+2022,New York,3,Robert Zimmerman,D / Working Families Party,"120,060",False
+2022,New York,3,,Other,92,False
+2022,New York,17,Michael Lawler,R / Conservative Party,"140,883",False
+2022,New York,17,Sean Maloney,D / Working Families Party,"137,633",True
+2022,New York,17,,Other,145,False
+2022,New York,2,Andrew Garbarino,R / Conservative Party,"148,613",True
+2022,New York,2,Jackie Gordon,D / Working Families Party,"95,183",False
+2022,New York,2,,Other,317,False
+2022,New York,20,Paul Tonko,D / Working Families Party,"156,355",True
+2022,New York,20,Elizabeth Joy,R / Conservative Party,"128,970",False
+2022,New York,20,,Other,138,False
+2022,New York,11,Nicole Malliotakis,R / Conservative Party,"124,902",True
+2022,New York,11,Max Rose,D,"80,093",False
+2022,New York,15,Ritchie Torres,D,"72,610",True
+2022,New York,15,Stylo A. Sapaskis,R,"15,265",False
+2022,Georgia,13,David Scott,D,"215,703",True
+2022,Georgia,13,Caesar Gonzales,R,"48,129",False
+2022,Georgia,1,Earl Carter,R,"156,015",True
+2022,Georgia,1,Wade Herring,D,"107,659",False
+2022,Georgia,3,Drew Ferguson,R,"213,453",True
+2022,Georgia,3,Val Almonord,D,"96,788",False
+2022,Georgia,7,Lucy McBath,D,"143,063",True
+2022,Georgia,7,Mark Gonsalves,R,"91,262",False
+2022,Georgia,7,Lisa Babbage,R,14,False
+2022,Georgia,12,Rick Allen,R,"157,936",True
+2022,Georgia,12,Liz Johnson,D,"107,079",False
+2022,Georgia,6,Rich McCormick,R,"202,715",False
+2022,Georgia,6,Bob Christian,D,"122,053",False
+2022,Georgia,11,Barry Loudermilk,R,"189,416",True
+2022,Georgia,11,Antonio Daza,D,"112,722",False
+2022,Georgia,1,Earl Carter,R,"156,015",True
+2022,Georgia,1,Wade Herring,D,"107,659",False
+2022,Georgia,12,Rick Allen,R,"157,936",True
+2022,Georgia,12,Liz Johnson,D,"107,079",False
+2022,Georgia,4,Hank Johnson,D,"215,815",True
+2022,Georgia,4,Jonathan Chavez,R,"59,210",False
+2022,Georgia,8,Austin Scott,R,"178,560",True
+2022,Georgia,8,Darrius Butler,D,"81,733",False
+2022,Georgia,2,Sanford Bishop Jr.,D,"132,249",True
+2022,Georgia,2,Chris West,R,"108,267",False
+2022,Georgia,13,David Scott,D,"215,703",True
+2022,Georgia,13,Caesar Gonzales,R,"48,129",False
+2022,Georgia,10,Mike Collins,R,"198,413",False
+2022,Georgia,10,Green,D,"109,074",False
+2022,Georgia,14,Marjorie Taylor Greene,R,"169,987",True
+2022,Georgia,14,Marcus Flowers,D,"88,018",False
+2022,Georgia,3,Drew Ferguson,R,"213,453",True
+2022,Georgia,3,Val Almonord,D,"96,788",False
+2022,Georgia,14,Marjorie Taylor Greene,R,"169,987",True
+2022,Georgia,14,Marcus Flowers,D,"88,018",False
+2022,Georgia,4,Hank Johnson,D,"215,815",True
+2022,Georgia,4,Jonathan Chavez,R,"59,210",False
+2022,Georgia,2,Sanford Bishop Jr.,D,"132,249",True
+2022,Georgia,2,Chris West,R,"108,267",False
+2022,Georgia,11,Barry Loudermilk,R,"189,416",True
+2022,Georgia,11,Antonio Daza,D,"112,722",False
+2022,Georgia,5,Nikema Williams,D,"242,704",True
+2022,Georgia,5,Christian Zimm,R,"51,594",False
+2022,Georgia,8,Austin Scott,R,"178,560",True
+2022,Georgia,8,Darrius Butler,D,"81,733",False
+2022,Georgia,5,Nikema Williams,D,"242,704",True
+2022,Georgia,5,Christian Zimm,R,"51,594",False
+2022,Georgia,6,Rich McCormick,R,"202,715",False
+2022,Georgia,6,Bob Christian,D,"122,053",False
+2022,Georgia,9,Andrew Clyde,R,"212,667",True
+2022,Georgia,9,Michael Ford,D,"81,203",False
+2022,Georgia,7,Lucy McBath,D,"143,063",True
+2022,Georgia,7,Mark Gonsalves,R,"91,262",False
+2022,Georgia,7,Lisa Babbage,R,14,False
+2022,Georgia,9,Andrew Clyde,R,"212,667",True
+2022,Georgia,9,Michael Ford,D,"81,203",False
+2022,Georgia,10,Mike Collins,R,"198,413",False
+2022,Georgia,10,Green,D,"109,074",False
+2022,Illinois,6,Sean Casten,D,"150,496",True
+2022,Illinois,6,Keith Pekau,R,"126,351",False
+2022,Illinois,6,Arthur Jones,Independent,12,False
+2022,Illinois,4,Jesus Garcia,D,"91,036",True
+2022,Illinois,4,James Falakos,R,"37,352",False
+2022,Illinois,4,Ed Hershey,Working Class Party,"4,605",False
+2022,Illinois,4,Alicia Martinez,Independent,54,False
+2022,Illinois,10,Brad Schneider,D,"140,059",True
+2022,Illinois,10,Joseph Severino,R,"80,642",False
+2022,Illinois,14,Lauren Underwood,D,"124,628",True
+2022,Illinois,14,Scott Gryder,R,"107,247",False
+2022,Illinois,2,Robin Kelly,D,"127,650",True
+2022,Illinois,2,Thomas Lynch,R,"60,834",False
+2022,Illinois,8,Raja Krishnamoorthi,D,"112,042",True
+2022,Illinois,8,Chris Dargis,R,"87,143",False
+2022,Illinois,16,Darin LaHood,R,"158,795",True
+2022,Illinois,16,Elizabeth Haderlein,D,"79,705",False
+2022,Illinois,13,Nikki Budzinski,D,"129,243",False
+2022,Illinois,13,Regan Deering,R,"106,853",False
+2022,Illinois,8,Raja Krishnamoorthi,D,"112,042",True
+2022,Illinois,8,Chris Dargis,R,"87,143",False
+2022,Illinois,9,Jan Schakowsky,D,"144,748",True
+2022,Illinois,9,Max Rice,R,"56,055",False
+2022,Illinois,10,Brad Schneider,D,"140,059",True
+2022,Illinois,10,Joseph Severino,R,"80,642",False
+2022,Illinois,11,Bill Foster,D,"149,172",True
+2022,Illinois,11,Catalina Lauf,R,"115,069",False
+2022,Illinois,11,Donald Wagner,Independent,0,False
+2022,Illinois,12,Mike Bost,R,"135,111",True
+2022,Illinois,12,Homer Markel,D,"46,434",False
+2022,Illinois,4,Jesus Garcia,D,"91,036",True
+2022,Illinois,4,James Falakos,R,"37,352",False
+2022,Illinois,4,Ed Hershey,Working Class Party,"4,605",False
+2022,Illinois,4,Alicia Martinez,Independent,54,False
+2022,Illinois,1,Jonathan Jackson,D,"159,142",False
+2022,Illinois,1,Eric Carlson,R,"78,258",False
+2022,Illinois,1,Tori Nicholson,Independent,13,False
+2022,Illinois,1,Babette Peyton,Independent,12,False
+2022,Illinois,5,Mike Quigley,D,"162,706",True
+2022,Illinois,5,Tom Hanson,R,"73,331",False
+2022,Illinois,5,Jerico Matias Cruz,Independent,"3,920",False
+2022,Illinois,3,Delia Ramirez,D,"108,570",False
+2022,Illinois,3,Justin Burau,R,"54,147",False
+2022,Illinois,17,Eric Sorensen,D,"119,450",False
+2022,Illinois,17,Esther Joy King,R,"111,378",False
+2022,Illinois,7,Danny K. Davis,D,"167,650",True
+2022,Illinois,7,Chad Koppie,Independent,83,False
+2022,Illinois,7,Roger Romanelli,Independent,10,False
+2022,Illinois,7,Joshua Loyd,Independent,3,False
+2022,Illinois,12,Mike Bost,R,"135,111",True
+2022,Illinois,12,Homer Markel,D,"46,434",False
+2022,Illinois,15,Mary Miller,R,"124,494",True
+2022,Illinois,15,Paul Lange,D,"52,098",False
+2022,Illinois,15,Mary Miller,R,"124,494",True
+2022,Illinois,15,Paul Lange,D,"52,098",False
+2022,Illinois,2,Robin Kelly,D,"127,650",True
+2022,Illinois,2,Thomas Lynch,R,"60,834",False
+2022,Illinois,14,Lauren Underwood,D,"124,628",True
+2022,Illinois,14,Scott Gryder,R,"107,247",False
+2022,Illinois,17,Eric Sorensen,D,"119,450",False
+2022,Illinois,17,Esther Joy King,R,"111,378",False
+2022,Illinois,9,Jan Schakowsky,D,"144,748",True
+2022,Illinois,9,Max Rice,R,"56,055",False
+2022,Illinois,5,Mike Quigley,D,"162,706",True
+2022,Illinois,5,Tom Hanson,R,"73,331",False
+2022,Illinois,5,Jerico Matias Cruz,Independent,"3,920",False
+2022,Illinois,7,Danny K. Davis,D,"167,650",True
+2022,Illinois,7,Chad Koppie,Independent,83,False
+2022,Illinois,7,Roger Romanelli,Independent,10,False
+2022,Illinois,7,Joshua Loyd,Independent,3,False
+2022,Illinois,6,Sean Casten,D,"150,496",True
+2022,Illinois,6,Keith Pekau,R,"126,351",False
+2022,Illinois,6,Arthur Jones,Independent,12,False
+2022,Illinois,1,Jonathan Jackson,D,"159,142",False
+2022,Illinois,1,Eric Carlson,R,"78,258",False
+2022,Illinois,1,Tori Nicholson,Independent,13,False
+2022,Illinois,1,Babette Peyton,Independent,12,False
+2022,Illinois,3,Delia Ramirez,D,"108,570",False
+2022,Illinois,3,Justin Burau,R,"54,147",False
+2022,Illinois,16,Darin LaHood,R,"158,795",True
+2022,Illinois,16,Elizabeth Haderlein,D,"79,705",False
+2022,Illinois,13,Nikki Budzinski,D,"129,243",False
+2022,Illinois,13,Regan Deering,R,"106,853",False
+2022,Illinois,11,Bill Foster,D,"149,172",True
+2022,Illinois,11,Catalina Lauf,R,"115,069",False
+2022,Illinois,11,Donald Wagner,Independent,0,False
+2020,New York,14,Cortez,D,"152,661",True
+2020,New York,14,John Cummings,R / Conservative Party,"58,440",False
+2020,New York,14,Cabrera,Serve America Movement Party,"2,000",False
+2020,New York,14,Antoine Tucker,R,0,False
+2020,New York,14,,Other,222,False
+2020,New York,20,Paul Tonko,D / Working Families Party / Independence Party,"219,705",True
+2020,New York,20,Elizabeth Joy,R / Conservative Party / Serve America Movement Party,"139,446",False
+2020,New York,20,,Other,191,False
+2020,New York,7,Nydia Velazquez,D / Working Families Party,"191,073",True
+2020,New York,7,Brian Kelly,R / Conservative Party,"32,520",False
+2020,New York,7,Gilbert Midonnet,L,"1,522",False
+2020,New York,7,,Other,338,False
+2020,New York,16,Jamaal Bowman,D,"218,471",False
+2020,New York,16,Patrick McManus,Conservative Party,"41,085",False
+2020,New York,16,,Other,414,False
+2020,New York,24,John Katko,R / Conservative Party / Independence Party,"182,567",True
+2020,New York,24,Dana Balter,D,"147,638",False
+2020,New York,24,Steven Williams,Working Families Party,"13,232",False
+2020,New York,24,,Other,187,False
+2020,New York,18,Sean Maloney,D / Working Families Party / Independence Party,"187,169",True
+2020,New York,18,Chele Farley,R / Conservative Party,"145,098",False
+2020,New York,18,Scott Smith,Serve America Movement Party / L,"3,162",False
+2020,New York,18,,Other,116,False
+2020,New York,21,Elise Stefanik,R / Conservative Party / Independence Party,"188,649",True
+2020,New York,21,Tedra Cobb,D / Working Families Party,"131,992",False
+2020,New York,21,,Other,138,False
+2020,New York,12,Carolyn B. Maloney,D,"265,172",True
+2020,New York,12,Cano,R / Conservative Party,"53,061",False
+2020,New York,12,Steven Kolln,L,"4,015",False
+2020,New York,12,,Other,773,False
+2020,New York,26,Brian Higgins,D / Working Families Party / Serve America Movement Party,"223,276",True
+2020,New York,26, Sr.,R,"91,687",False
+2020,New York,26,Mike Raleigh,G,"4,628",False
+2020,New York,26,,Other,244,False
+2020,New York,2,Andrew Garbarino,R / Conservative Party / L / Serve America Movement Party,"177,353",False
+2020,New York,2,Jackie Gordon,D / Working Families Party / Independence Party,"154,123",False
+2020,New York,2,Harry Burger,G,"3,446",False
+2020,New York,2,,Other,90,False
+2020,New York,2,Andrew Garbarino,R / Conservative Party / L / Serve America Movement Party,"177,353",False
+2020,New York,2,Jackie Gordon,D / Working Families Party / Independence Party,"154,123",False
+2020,New York,2,Harry Burger,G,"3,446",False
+2020,New York,2,,Other,90,False
+2020,New York,23,Tom Reed,R / Conservative Party / Independence Party,"181,060",True
+2020,New York,23,Tracy Mitrano,D / Working Families Party,"129,014",False
+2020,New York,23,Andrew Kolstee,L,"3,650",False
+2020,New York,23,Scott Noren,D,0,False
+2020,New York,23,,Other,118,False
+2020,New York,11,Nicole Malliotakis,R / Conservative Party,"155,608",False
+2020,New York,11,Max Rose,D / Independence Party,"137,198",True
+2020,New York,11,,Other,508,False
+2020,New York,22,Claudia Tenney,R / Conservative Party,"156,098",False
+2020,New York,22,Anthony Brindisi,D / Working Families Party / Independence Party,"155,989",True
+2020,New York,22,Keith Price,L,"6,780",False
+2020,New York,22,James Desira,Independent,0,False
+2020,New York,22,,Other,771,False
+2020,New York,15,Ritchie Torres,D,"169,533",False
+2020,New York,15,Patrick Delices,R / Conservative Party,"21,221",False
+2020,New York,15,,Other,283,False
+2020,New York,1,Lee Zeldin,R / Conservative Party / Independence Party,"199,763",True
+2020,New York,1,Nancy Goroff,D / Working Families Party,"157,484",False
+2020,New York,1,,Other,99,False
+2020,New York,6,Grace Meng,D / Working Families Party,"158,862",True
+2020,New York,6,Thomas Zmich,R / L / Conservative Party / Save Our City Party,"74,829",False
+2020,New York,6,,Other,223,False
+2020,New York,9,Yvette D. Clarke,D / Working Families Party,"230,221",True
+2020,New York,9,Pierre,R / Conservative Party,"43,950",False
+2020,New York,9,Gary Popkin,L,"1,644",False
+2020,New York,9,Azumah,Serve America Movement Party,"1,052",False
+2020,New York,9,,Other,381,False
+2020,New York,3,Tom Suozzi,D / Working Families Party / Independence Party,"208,412",True
+2020,New York,3,Santos,R / Conservative Party,"161,907",False
+2020,New York,3,Howard Rabin,L,"2,154",False
+2020,New York,3,,Other,139,False
+2020,New York,22,Claudia Tenney,R / Conservative Party,"156,098",False
+2020,New York,22,Anthony Brindisi,D / Working Families Party / Independence Party,"155,989",True
+2020,New York,22,Keith Price,L,"6,780",False
+2020,New York,22,James Desira,Independent,0,False
+2020,New York,22,,Other,771,False
+2020,New York,25,Joseph Morelle,D / Working Families Party / Independence Party,"206,396",True
+2020,New York,25,George Mitris,R / Conservative Party,"136,198",False
+2020,New York,25,Kevin Wilson,L,"5,325",False
+2020,New York,25,,Other,179,False
+2020,New York,5,Gregory W. Meeks,D,"229,125",True
+2020,New York,5,,Other,"1,554",False
+2020,New York,17,Mondaire Jones,D / Working Families Party,"197,353",False
+2020,New York,17,Maureen McArdle Schulman,R,"117,307",False
+2020,New York,17,Yehudis Gottesfeld,Conservative Party,"8,887",False
+2020,New York,17,Joshua Eisen,ECL Party,"6,363",False
+2020,New York,17,Michael Parietti,Serve America Movement Party,"2,745",False
+2020,New York,17,,Other,197,False
+2020,New York,27,Christopher Jacobs,R / Conservative Party / Independence Party,"229,044",True
+2020,New York,27,Nate McMurray,D / Working Families Party,"149,559",False
+2020,New York,27,Duane Whitmer,L,"4,884",False
+2020,New York,27,,Other,121,False
+2020,New York,8,Hakeem Jeffries,D / Working Families Party,"234,933",True
+2020,New York,8,Garfield Wallace,R / Conservative Party,"42,007",False
+2020,New York,8,,Other,229,False
+2020,New York,11,Nicole Malliotakis,R / Conservative Party,"155,608",False
+2020,New York,11,Max Rose,D / Independence Party,"137,198",True
+2020,New York,11,,Other,508,False
+2020,New York,19,Antonio Delgado,D / Working Families Party / Serve America Movement Party,"192,100",True
+2020,New York,19,Kyle Van De Water,R,"151,475",False
+2020,New York,19,Victoria Alexander,L,"4,224",False
+2020,New York,19,Steven Greenfield,G,"2,799",False
+2020,New York,19,,Other,"2,173",False
+2020,New York,4,Kathleen Rice,D,"199,762",True
+2020,New York,4,Douglas Tuman,R / Conservative Party,"153,007",False
+2020,New York,4,Joseph R. Naham,G,"3,024",False
+2020,New York,4,,Other,119,False
+2020,New York,13,Adriano Espaillat,D / Working Families Party,"231,841",True
+2020,New York,13,Lovelynn Gwinn,R,"19,829",False
+2020,New York,13,Perry,Conservative Party,"3,295",False
+2020,New York,13,,Other,405,False
+2020,New York,10,Jerrold Nadler,Working Families Party / D,"206,310",True
+2020,New York,10,Cathy Bernstein,R / Conservative Party,"66,889",False
+2020,New York,10,Michael Madrid,L,"3,370",False
+2020,New York,10,,Other,407,False
+2020,Georgia,6,Lucy McBath,D,"216,775",True
+2020,Georgia,6,Karen Handel,R,"180,329",False
+2020,Georgia,12,Rick Allen,R,"181,038",True
+2020,Georgia,12,Liz Johnson,D,"129,061",False
+2020,Georgia,9,Andrew Clyde,R,"292,750",False
+2020,Georgia,9,Devin Pandy,D,"79,797",False
+2020,Georgia,10,Jody Hice,R,"235,810",True
+2020,Georgia,10,Green,D,"142,636",False
+2020,Georgia,6,Lucy McBath,D,"216,775",True
+2020,Georgia,6,Karen Handel,R,"180,329",False
+2020,Georgia,14,Marjorie Taylor Greene,R,"229,827",False
+2020,Georgia,14,Kevin Van Ausdal,D,"77,798",False
+2020,Georgia,3,Drew Ferguson,R,"241,526",True
+2020,Georgia,3,Val Almonord,D,"129,792",False
+2020,Georgia,7,Carolyn Bourdeaux,D,"190,900",False
+2020,Georgia,7,Rich McCormick,R,"180,564",False
+2020,Georgia,4,Hank Johnson,D,"278,906",True
+2020,Georgia,4,Johsie Cruz,R,"69,393",False
+2020,Georgia,13,David Scott,D,"279,045",True
+2020,Georgia,13,Becky E. Hites,R,"81,476",False
+2020,Georgia,13,Martin Cowen,L,0,False
+2020,Georgia,5,Nikema Williams,D,"301,857",False
+2020,Georgia,5,Angela Stanton King,R,"52,646",False
+2020,Georgia,8,Austin Scott,R,"198,701",True
+2020,Georgia,8,Lindsay Holliday,D,"109,264",False
+2020,Georgia,8,James Cooper III,G,48,False
+2020,Georgia,11,Barry Loudermilk,R,"245,259",True
+2020,Georgia,11,Dana Barrett,D,"160,623",False
+2020,Georgia,2,Sanford Bishop Jr.,D,"161,397",True
+2020,Georgia,2,Donald Cole,R,"111,620",False
+2020,Georgia,2,JaMelle Hill,Independent,17,False
+2020,Georgia,1,Earl Carter,R,"189,457",True
+2020,Georgia,1,Joyce Marie Griggs,D,"135,238",False
+2020,Georgia,7,Carolyn Bourdeaux,D,"190,900",False
+2020,Georgia,7,Rich McCormick,R,"180,564",False
+2020,Illinois,2,Robin Kelly,D,"234,896",True
+2020,Illinois,2,Theresa Raborn,R,"63,142",False
+2020,Illinois,18,Darin LaHood,R,"261,840",True
+2020,Illinois,18,George Petrilli,D,"110,039",False
+2020,Illinois,13,Rodney Davis,R,"181,373",True
+2020,Illinois,13,Betsy Londrigan,D,"151,648",False
+2020,Illinois,10,Brad Schneider,D,"202,402",True
+2020,Illinois,10,Valerie Ramirez Mukherjee,R,"114,442",False
+2020,Illinois,10,Joseph Kopsick,Independent,18,False
+2020,Illinois,10,David Rych,Independent,12,False
+2020,Illinois,16,Adam Kinzinger,R,"218,839",True
+2020,Illinois,16,Dani Brzozowski,D,"119,313",False
+2020,Illinois,16,Branden McCullough,Independent,4,False
+2020,Illinois,16,Roy Jones,Independent,3,False
+2020,Illinois,9,Jan Schakowsky,D,"262,045",True
+2020,Illinois,9,Sargis Sangari,R,"107,125",False
+2020,Illinois,11,Bill Foster,D,"194,557",True
+2020,Illinois,11,Rick Laib,R,"112,807",False
+2020,Illinois,11,Jon Harlson,Independent,13,False
+2020,Illinois,8,Raja Krishnamoorthi,D,"186,251",True
+2020,Illinois,8,Preston Nelson,L,"68,327",False
+2020,Illinois,17,Cheri Bustos,D,"156,011",True
+2020,Illinois,17,Esther Joy King,R,"143,863",False
+2020,Illinois,17,General Parker,Independent,21,False
+2020,Illinois,12,Mike Bost,R,"194,839",True
+2020,Illinois,12,Ray Lenzi,D,"127,577",False
+2020,Illinois,15,Mary Miller,R,"244,947",False
+2020,Illinois,15,Erika Weaver,D,"88,559",False
+2020,Illinois,1,Bobby Rush,D,"239,943",True
+2020,Illinois,1,Philanise White,R,"85,027",False
+2020,Illinois,1,Ruth Pellegrini,Independent,153,False
+2020,Illinois,7,Danny K. Davis,D,"249,383",True
+2020,Illinois,7,Craig Cameron,R,"41,390",False
+2020,Illinois,7,Tracy Jennings,Independent,"19,355",False
+2020,Illinois,7,Richard Mayers,Independent,0,False
+2020,Illinois,7,Deirdre McCloskey,Independent,0,False
+2020,Illinois,6,Sean Casten,D,"213,777",True
+2020,Illinois,6,Jeanne M. Ives,R,"183,891",False
+2020,Illinois,6,Bill Redpath,L,"7,079",False
+2020,Illinois,3,Marie Newman,D,"172,997",False
+2020,Illinois,3,Mike Fricilone,R,"133,851",False
+2020,Illinois,4,Jesus Garcia,D,"187,219",True
+2020,Illinois,4,Jesus Solorio,R,"35,518",False
+2020,Illinois,13,Rodney Davis,R,"181,373",True
+2020,Illinois,13,Betsy Londrigan,D,"151,648",False
+2020,Illinois,5,Mike Quigley,D,"255,661",True
+2020,Illinois,5,Tom Hanson,R,"96,200",False
+2020,Illinois,5,Thomas Wilda,G,"9,408",False
+2020,Illinois,5,Frank Rowder,Independent,2,False
+2020,Illinois,14,Lauren Underwood,D,"203,209",True
+2020,Illinois,14,Jim Oberweis,R,"197,835",False
+2020,Illinois,14,Joseph Monack,Independent,8,False
