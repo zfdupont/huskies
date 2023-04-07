@@ -37,11 +37,10 @@ def merge_NY(src_path, agg):
     gdf = gdf.drop(7041, axis=0)
     gdf = gdf.reset_index(drop=True)
     gdf = assign_plan(gdf, f'{src_path}/data/NY/CON22_June_03_2022.shp', 'district_id_21')
+    gdf.to_file('mergedNYP.geojson', driver='GeoJSON')
     if agg:
         gdf = aggregate(gdf, 'district_id_21', "POPTOT  VAPTOTAL  VAPWHITE  VAPBLACK  VAPINAMORAK  VAPASIAN  VAPISLAND  VAPOTHER  VAPMIXED  VAPHISP  2020VTRUMP  2020VBIDEN".split())
         gdf.to_file('mergedNYD.geojson', driver='GeoJSON')
-    else:
-        gdf.to_file('mergedNYP.geojson', driver='GeoJSON')
 def merge_GA(src_path, agg):
     gdf = get_bounds(f'{src_path}/data/GA/ga_vtd_2020_bound.shp',['NAME20','GEOID20','ALAND20','geometry'])
     e_data = get_data(f"{src_path}/data/GA/ga_2020_2020_vtd.csv",['GEOID20','G20PRERTRU','G20PREDBID'])
@@ -50,11 +49,10 @@ def merge_GA(src_path, agg):
     gdf = gdf.rename(columns={'G20PRERTRU': '2020VTRUMP', 'G20PREDBID': '2020VBIDEN', 'P0010001':'POPTOT','P0030001':'VAPTOTAL', 'P0030003':'VAPWHITE', 'P0030004':'VAPBLACK','P0030005':'VAPINAMORAK','P0030006':'VAPASIAN','P0030007':'VAPISLAND','P0030008':'VAPOTHER','P0030009':'VAPMIXED','P0040002':'VAPHISP'})
     gdf = gpd.GeoDataFrame(gdf, geometry='geometry')
     gdf = assign_plan(gdf,f'{src_path}/data/GA/ga_cong_2011_to_2021.shp','district_id_21')
+    gdf.to_file('mergedGAP.geojson', driver='GeoJSON')
     if agg:
         gdf = aggregate(gdf,'district_id_21',"POPTOT  VAPTOTAL  VAPWHITE  VAPBLACK  VAPINAMORAK  VAPASIAN  VAPISLAND  VAPOTHER  VAPMIXED  VAPHISP  2020VTRUMP  2020VBIDEN".split())
         gdf.to_file('mergedGAD.geojson', driver='GeoJSON')
-    else:
-        gdf.to_file('mergedGAP.geojson', driver='GeoJSON')
 def merge_IL(src_path, agg):
     gdf = get_bounds(f'{src_path}/data/IL/il_vtd_2020_bound.shp',['NAME20','GEOID20','ALAND20','geometry'])
     e_data = get_data(f"{src_path}/data/IL/il_2020_2020_vtd.csv",['GEOID20','G20PRERTRU','G20PREDBID'])
@@ -63,16 +61,14 @@ def merge_IL(src_path, agg):
     gdf = gdf.rename(columns={'G20PRERTRU': '2020VTRUMP', 'G20PREDBID': '2020VBIDEN', 'P0010001':'POPTOT','P0030001':'VAPTOTAL', 'P0030003':'VAPWHITE', 'P0030004':'VAPBLACK','P0030005':'VAPINAMORAK','P0030006':'VAPASIAN','P0030007':'VAPISLAND','P0030008':'VAPOTHER','P0030009':'VAPMIXED','P0040002':'VAPHISP'})
     gdf = gpd.GeoDataFrame(gdf, geometry='geometry')
     gdf = assign_plan(gdf,f'{src_path}/data/IL/il_cong_2011_to_2021.shp','district_id_21')
+    gdf.to_file("mergedILP.geojson", driver='GeoJSON')
     if agg:
         gdf = aggregate(gdf,'district_id_21',"POPTOT  VAPTOTAL  VAPWHITE  VAPBLACK  VAPINAMORAK  VAPASIAN  VAPISLAND  VAPOTHER  VAPMIXED  VAPHISP  2020VTRUMP  2020VBIDEN".split())
         gdf.to_file('mergedILD.geojson', driver='GeoJSON')
-    else:
-        gdf.to_file("mergedILP.geojson", driver='GeoJSON')
-def merge_all():
+def merge_all(agg):
     src_path = str(Path(__file__).parent)
-    agg = False #set to true to aggregate district data, otherwise precinct
     merge_NY(src_path, agg)
     merge_GA(src_path, agg)
     merge_IL(src_path, agg)
 if __name__ == '__main__':
-    merge_all()
+    merge_all(True)
