@@ -8,6 +8,7 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateXY;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Polygon;
+import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -75,11 +76,16 @@ class FeaturePOJO {
 }
 public class FeatureCollectionPOJO {
     public String type;
-    public HashMap<String, Object> crs;
 
     public ArrayList<HashMap<String, Object>> features;
 
     public FeatureCollectionPOJO() {
+    }
+
+    public FeatureCollectionPOJO(Map<String, Object> fc) {
+        this.type = fc.get("type").toString();
+//        this.crs = fc.get()
+
     }
 
     @Override

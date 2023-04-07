@@ -1,44 +1,41 @@
-import pandas as pd
-import json
-import os
-import tqdm
+import mergeDataGA
+import mergeDataIL
+import mergeDataNY
+import geopandas
+import asyncio
 import requests
-
-official_dtypes = {'precinct':str,'office':str, 'party_detailed':str,
-'party_simplified':str,'mode':str,'votes':int, 'county_name':str,
-'county_fips':str, 'jurisdiction_name':str,'jurisdiction_fips':str,
-'candidate':str, 'district':str, 'dataverse':str,'year':int,
-'stage':str, 'state':str, 'special':str, 'writein':str, 'state_po':str,
-'state_fips':str, 'state_cen':str, 'state_ic':str, 'date':str,
-'readme_check':str,'magnitude':int}
+import json
 
 
-def process(row):
-    print(row)
-    
-    
+
+SERVER_URL = 'http://localhost:8080'
+
+async def sendGDF(gdf : geopandas.GeoDataFrame, name : str, state : str):
+    API_URL=f'{SERVER_URL}/api/plan'
+    r = requests.post(API_URL, json={
+        'name': name,
+        'state': state,
+        'plan': gdf.to_json(drop_id=True)
+    })
+    return r
+
+async def main():
+    print("getting json...")
+    data_frames = await asyncio.gather(
+        mergeDataGA.merge("/data/GA/ga_cong_2011_to_2021.shp", districts=True, write=False),
+        mergeDataIL.merge("/data/IL/il_cong_2011_to_2021.shp", districts=True, write=False),
+        mergeDataNY.merge("/data/NY/ny_cong_2012_to_2021.shp", districts=True, write=False),
+        mergeDataGA.merge(districts=True, write=False),
+        mergeDataIL.merge(districts=True, write=False),
+        mergeDataNY.merge(districts=True, write=False)
+    )
+    print(data_frames)
+    STATE_IDS = ['GA', 'IL', 'NY']
+    L = await asyncio.gather(
+        *[sendGDF(df, ('Enacted' if i > 2 else '2020'), STATE_IDS[i%3]) for i,df in enumerate(data_frames)]   
+    )
+    print("done!")
+    print(L)
 
 if __name__ == '__main__':
-    
-    # Download from google drive
-    # Configure this path to work for you
-    df = pd.read_csv("~/huskies-416-project/data/HOUSE_precinct_general.csv", 
-                     usecols=['party_simplified', 'votes', 'district', 'jurisdiction_name', 'jurisdiction_fips', 'state', 'candidate', 'state_fips' ], 
-                     dtype=official_dtypes)
-    df = df[df['state'].str.contains("GEORGIA|NEW YORK|ILLINOIS") == True]
-
-
-    with tqdm.tqdm(total=len(df)) as progress_bar:
-        for row in df.itertuples():
-            payload = {
-                "plan": "GA2020",
-                "candidate": row.candidate,
-                "district": row.district,
-                "state": row.state_fips,
-                "party": row.party_simplified,
-                "votes": row.votes,
-                "precinct": row.jurisdiction_fips
-            }
-            r = requests.patch('http://localhost:8080/api/precinct', json=payload)
-            progress_bar.update(1)
-        
+    asyncio.run(main())

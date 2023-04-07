@@ -6,7 +6,7 @@ import maup
 import asyncio
 from pathlib import Path
 
-async def merge():
+async def merge(shp_path="/data/NY/CON22_June_03_2022.shp", districts=False, write=True):
     #reading boundary data, filter out name, geoid, and geometry
     src_path = str(Path(__file__).parent)
     pth = f'{src_path}/data/NY/ny_vtd_2020_bound.shp'
@@ -27,29 +27,31 @@ async def merge():
     gdf = gpd.GeoDataFrame(gdf, geometry='geometry')
     gdf = gdf.drop(7041, axis=0)
     gdf = gdf.reset_index(drop=True)
-    gdf2 = gpd.read_file(f'{src_path}/data/NY/CON22_June_03_2022.shp')
+    gdf2 = gpd.read_file(f'{src_path}{shp_path}')
     #make crs match
     if gdf.crs != gdf2.crs:
         gdf2 = gdf2.to_crs(gdf.crs)
     #assign district boundaries to 
     assignments = maup.assign(gdf, gdf2)
     gdf['district_id'] = assignments
-    # TODO: split this into a separate file because each file should represent a different plan
-    # we can look into adding the 2020 districts into new plans but that would be a new use case  
     
-    # #get 2020 district bounds
-    # gdf3 = gpd.read_file(str(src_path.parent)+'/data/NY/ny_cong_2012_to_2021.shp')
-    # #make crs match
-    # if gdf.crs != gdf3.crs:
-    #     gdf = gdf.to_crs(gdf3.crs)
-    # #assign district boundaries to 
-    # assignments2 = maup.assign(gdf, gdf3)
-    # gdf['district_id_2020'] = assignments2
-    gdf = gdf.dissolve(by='district_id',
+    if districts:
+        gdf = gdf.dissolve(by='district_id',
                        aggfunc={
                            key: 'sum' for key in filter(lambda x: x in "POPTOT  VAPTOTAL  VAPWHITE  VAPBLACK  VAPINAMORAK  VAPASIAN  VAPISLAND  VAPOTHER  VAPMIXED  VAPHISP  2020VTRUMP  2020VBIDEN".split(), list(gdf.columns))
                        })
-    gdf.to_file('mergedNY.geojson', driver='GeoJSON')
+    else:
+        #get 2020 district bounds
+        gdf3 = gpd.read_file(str(src_path.parent)+'/data/NY/ny_cong_2012_to_2021.shp')
+        #make crs match
+        if gdf.crs != gdf3.crs:
+            gdf = gdf.to_crs(gdf3.crs)
+        #assign district boundaries to 
+        assignments2 = maup.assign(gdf, gdf3)
+        gdf['district_id_2020'] = assignments2
+    
+    if write: gdf.to_file('mergedNY.geojson', driver='GeoJSON')
+    return gdf
     
 if __name__ == '__main__':
     asyncio.run(merge())
