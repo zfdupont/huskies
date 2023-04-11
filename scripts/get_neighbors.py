@@ -36,14 +36,23 @@ def neighbors_NY():
     gdf = get_precincts('./mergedNYP.geojson')
     neighbors = find_neighbors(gdf)
     make_graph(neighbors, './graphNY.json', gdf)
+    gdf = get_precincts('./mergedNYP20.geojson')
+    neighbors = find_neighbors(gdf)
+    make_graph(neighbors, './graphNY20.json', gdf)
 def neighbors_GA():
     gdf = get_precincts('./mergedGAP.geojson')
     neighbors = find_neighbors(gdf)
     make_graph(neighbors, './graphGA.json', gdf)
+    gdf = get_precincts('./mergedGAP20.geojson')
+    neighbors = find_neighbors(gdf)
+    make_graph(neighbors, './graphGA20.json', gdf)
 def neighbors_IL():
     gdf = get_precincts('./mergedILP.geojson')
     neighbors = find_neighbors(gdf)
     make_graph(neighbors, './graphIL.json', gdf)
+    gdf = get_precincts('./mergedILP20.geojson')
+    neighbors = find_neighbors(gdf)
+    make_graph(neighbors, './graphIL20.json', gdf)
 def neighbors_all():
     neighbors_NY()
     neighbors_GA()
