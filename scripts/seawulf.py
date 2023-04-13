@@ -7,7 +7,9 @@ from collections import defaultdict
 import json
 import pandas as pd
 import geopandas as gpd
-def create_partitions():
+import multiprocessing
+import pickle
+def create_partitions(n):
     graph = Graph.from_json('./graphGA.json')
     elections = [Election("PRE20", {"Democratic": "2020VBIDEN", "Republican": "2020VTRUMP"})]
     #also track total population, total VAP, and black VAP
@@ -32,20 +34,24 @@ def create_partitions():
     #keep the populations within 2% of the ideal population
     pop_constraint = constraints.within_percent_of_ideal_population(initial_partition, 0.05)
     plans = []
-    chain = MarkovChain(
-        proposal=proposal,
-        constraints=[
-            pop_constraint,
-            compactness_bound
-        ],
-        accept=accept.always_accept,
-        initial_state=initial_partition,
-        total_steps=50
-    )
-    for plan in chain:
-        plans.append(plan)
-        pass
-    return plans
+    for i in range(4):
+        chain = MarkovChain(
+            proposal=proposal,
+            constraints=[
+                pop_constraint,
+                compactness_bound
+            ],
+            accept=accept.always_accept,
+            initial_state=initial_partition,
+            total_steps=5
+        )
+        for plan in chain:
+            pass
+        plans.append(chain.state)
+    assignments = []
+    for i in range(len(plans)):
+        assignments.append(plans[i].assignment)
+    pickle.dump(assignments, open('assignments_' + str(n) + '.p', 'wb'))
 def calculate_split(ensemble):
     split = defaultdict(int)
     for plan in ensemble:
@@ -114,12 +120,26 @@ def compare_plan_to_2020(plan_20, plan_new, incumbent_mappings):
         for col in new_cols:
             gdf_new[col][mapping['id_new']] = mapping[col]
     gdf_new.to_file('generated_district.geojson', driver='GeoJSON')
+def combine_plans(plans_lists):
+    combined_plans = []
+    for plans_list in plans_lists:
+        combined_plans += plans_list
+    return combined_plans
 if __name__ == '__main__':
-    ensemble = create_partitions()
-    calculate_split(ensemble)
-    graph_20 = Graph.from_json('./graphGA20.json')
-    plan_20 = GeographicPartition(graph_20, assignment="district_id_20")
-    incumbents = pd.read_csv('./data/GA/incumbents_GA.csv')
-    plan_new = ensemble[-1]
-    incumbent_mappings = map_incumbents(plan_new, incumbents)
-    compare_plan_to_2020(plan_20, plan_new, incumbent_mappings)
+    num_cores = 4
+    args = [i for i in range(num_cores)]
+    processes = []
+    for arg in args:
+        p = multiprocessing.Process(target=create_partitions, args=[arg])
+        processes.append(p)
+        p.start()
+    for p in processes:
+        p.join()
+    #ensemble = combine_plans(plans_lists)
+    #calculate_split(ensemble)
+    #graph_20 = Graph.from_json('./graphGA20.json')
+    #plan_20 = GeographicPartition(graph_20, assignment="district_id_20")
+    #incumbents = pd.read_csv('./data/GA/incumbents_GA.csv')
+    #plan_new = ensemble[-1]
+    #incumbent_mappings = map_incumbents(plan_new, incumbents)
+    #compare_plan_to_2020(plan_20, plan_new, incumbent_mappings)
