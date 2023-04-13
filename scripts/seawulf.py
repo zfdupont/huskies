@@ -62,7 +62,8 @@ def calculate_split(ensemble):
         split[str(dem_winners) + "/" + str(rep_winners)] += 1
     with open("ensemble_split.json", "w") as outfile:
         json.dump(split, outfile)
-def compare_plan_to_2020(plan_new, incumbents):
+
+def map_incumbents(plan_new, incumbents):
     graph_20 = Graph.from_json('./graphGA20.json')
     plan_20 = GeographicPartition(graph_20, assignment="district_id_20")
     incumbent_mappings = []
@@ -77,6 +78,8 @@ def compare_plan_to_2020(plan_new, incumbents):
             if plan_new.graph.nodes[node]["GEOID20"] == incumbents["GEOID20"][i]:
                 mapping["id_new"] = plan_new.assignment[node]
         incumbent_mappings.append(mapping)
+    return incumbent_mappings
+def compare_plan_to_2020(plan_20, plan_new, incumbent_mappings):
     changes = ["VAPTOTAL", "ALAND20", "VAPBLACK", "2020VBIDEN", "2020VTRUMP"]
     for i in range(len(incumbent_mappings)):
         id_20 = incumbent_mappings[i]["id_20"]
@@ -114,5 +117,9 @@ def compare_plan_to_2020(plan_new, incumbents):
 if __name__ == '__main__':
     ensemble = create_partitions()
     calculate_split(ensemble)
+    graph_20 = Graph.from_json('./graphGA20.json')
+    plan_20 = GeographicPartition(graph_20, assignment="district_id_20")
     incumbents = pd.read_csv('./data/GA/incumbents_GA.csv')
-    compare_plan_to_2020(ensemble[-1], incumbents)
+    plan_new = ensemble[-1]
+    incumbent_mappings = map_incumbents(plan_new, incumbents)
+    compare_plan_to_2020(plan_20, plan_new, incumbent_mappings)
