@@ -34,6 +34,7 @@ def create_partitions(n):
     #keep the populations within 2% of the ideal population
     pop_constraint = constraints.within_percent_of_ideal_population(initial_partition, 0.05)
     plans = []
+    #creates some district plans and appends them to plans
     for i in range(4):
         chain = MarkovChain(
             proposal=proposal,
@@ -48,10 +49,15 @@ def create_partitions(n):
         for plan in chain:
             pass
         plans.append(chain.state)
+    #creates a list of plan assignments
     assignments = []
+    #append each plan's assignment to assignments
+    #note that all the plans have the same graph, so graph does not need to be saved
     for i in range(len(plans)):
         assignments.append(plans[i].assignment)
+    #pickle the assignments into a file for later ensemble analysis
     pickle.dump(assignments, open('assignments_' + str(n) + '.p', 'wb'))
+#unused code to save for later
 def calculate_split(ensemble):
     split = defaultdict(int)
     for plan in ensemble:
@@ -69,22 +75,7 @@ def calculate_split(ensemble):
     with open("ensemble_split.json", "w") as outfile:
         json.dump(split, outfile)
 
-def map_incumbents(plan_new, incumbents):
-    graph_20 = Graph.from_json('./graphGA20.json')
-    plan_20 = GeographicPartition(graph_20, assignment="district_id_20")
-    incumbent_mappings = []
-    for i in range(len(incumbents)):
-        mapping = dict()
-        mapping["name"] = incumbents["Name"][i]
-        mapping["party"] = incumbents["Party"][i]
-        for node in plan_20.graph.nodes:
-            if plan_20.graph.nodes[node]["GEOID20"] == incumbents["GEOID20"][i]:
-                mapping["id_20"] = plan_20.assignment[node]
-        for node in plan_new.graph.nodes:
-            if plan_new.graph.nodes[node]["GEOID20"] == incumbents["GEOID20"][i]:
-                mapping["id_new"] = plan_new.assignment[node]
-        incumbent_mappings.append(mapping)
-    return incumbent_mappings
+#unused code to save for later
 def compare_plan_to_2020(plan_20, plan_new, incumbent_mappings):
     changes = ["VAPTOTAL", "ALAND20", "VAPBLACK", "2020VBIDEN", "2020VTRUMP"]
     for i in range(len(incumbent_mappings)):
@@ -120,21 +111,17 @@ def compare_plan_to_2020(plan_20, plan_new, incumbent_mappings):
         for col in new_cols:
             gdf_new[col][mapping['id_new']] = mapping[col]
     gdf_new.to_file('generated_district.geojson', driver='GeoJSON')
-def combine_plans(plans_lists):
-    combined_plans = []
-    for plans_list in plans_lists:
-        combined_plans += plans_list
-    return combined_plans
 if __name__ == '__main__':
-    num_cores = 4
-    args = [i for i in range(num_cores)]
-    processes = []
+    num_cores = 4 #set to number of cores in system
+    args = [i for i in range(num_cores)] #numbering for each process
+    processes = [] #list of processes
     for arg in args:
-        p = multiprocessing.Process(target=create_partitions, args=[arg])
-        processes.append(p)
-        p.start()
+        p = multiprocessing.Process(target=create_partitions, args=[arg]) #create a parallel process
+        processes.append(p) #add the process to the list
+        p.start() #run the process
     for p in processes:
-        p.join()
+        p.join() #end the process
+    #unused code to save for later
     #ensemble = combine_plans(plans_lists)
     #calculate_split(ensemble)
     #graph_20 = Graph.from_json('./graphGA20.json')
