@@ -19,7 +19,7 @@ def find_incumbents(url):
         else: candidate, party = re.search(r'((?:\.|\w|\s)+) \(((?:\/|\w+|\s+)+)\)', text).groups()
         votes = row.find(class_='votebox-results-cell--number', string=re.compile(r'\d+'), recursive=False).text
         incumbent = not not row.find('u')
-        df = pd.concat([df, pd.DataFrame([[year, state, district, candidate, party, votes, incumbent]], columns=df.columns)])
+        df = pd.concat([df, pd.DataFrame([[int(year), state, int(district), candidate, party, int(votes.replace(',','')), incumbent]], columns=df.columns)])
         
 def find_district_links(url):
     r = requests.get(url)
@@ -42,4 +42,5 @@ def main():
 if __name__ == '__main__':
     df = pd.DataFrame(columns=['year', 'state', 'district', 'name', 'party', 'votes', 'incumbent'])
     main()
-    df.to_csv('scripts/data/house_candidates_by_district', index=False)
+    df = df.drop_duplicates(ignore_index=True)
+    df.to_csv('scripts/data/house_candidates_by_district.csv', index=False)
