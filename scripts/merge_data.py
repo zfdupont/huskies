@@ -18,6 +18,8 @@ def merge_data(gdf, column, data):
     return gdf
 def assign_plan(precincts, path, label):
     districts = gpd.read_file(path)
+    if path == f'{str(Path(__file__).parent)}/data/NY/CON22_June_03_2022.shp':
+        districts = districts.dissolve(by="DISTRICT")
     if districts.crs != precincts.crs:
         districts = districts.to_crs(precincts.crs)
     assignments = maup.assign(precincts, districts)
@@ -34,8 +36,6 @@ def merge_NY(src_path, agg):
     gdf = merge_data(gdf, "GEOID20", [e_data, d_data])
     gdf = gdf.rename(columns={'R_2020_pres': '2020VTRUMP', 'D_2020_pres': '2020VBIDEN','TOTAL_ADJ':'POPTOT', 'TOTAL_VAP_ADJ':'VAPTOTAL', 'WHITE_VAP_ADJ':'VAPWHITE', 'BLACK_VAP_ADJ':'VAPBLACK','AMIND_VAP_ADJ':'VAPINAMORAK','ASIAN_VAP_ADJ':'VAPASIAN','HWN_VAP_ADJ':'VAPISLAND','OTHER_VAP_ADJ':'VAPOTHER','MULTI_VAP_ADJ':'VAPMIXED','HISP_VAP_ADJ':'VAPHISP'})
     gdf = gpd.GeoDataFrame(gdf, geometry='geometry')
-    gdf = gdf.drop(7041, axis=0)
-    gdf = gdf.reset_index(drop=True)
     gdf20 = assign_plan(gdf,f'{src_path}/data/NY/ny_cong_2012_to_2021.shp','district_id_20')
     gdf20.to_file('mergedNYP20.geojson', driver='GeoJSON')
     gdf = assign_plan(gdf, f'{src_path}/data/NY/CON22_June_03_2022.shp', 'district_id_21')
