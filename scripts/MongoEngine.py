@@ -13,7 +13,7 @@ class MongoEngine:
         return cls._instance
 
     def __init__(self, db_name, uri='mongodb://localhost:27017/'):
-        self.client = pymongo.MongoClient(uri)
+        self.client = pymongo.MongoClient(uri, maxPoolSize=None)
         self.db = self.client[db_name]
 
     def insert_geodataframe(self, gdf, collection_name, geojson_name):
