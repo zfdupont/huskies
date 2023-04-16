@@ -3,7 +3,9 @@ from shapely.geometry import Point
 import geopandas as gpd
 
 import sys, os
-sys.path.append("/Users/zfdupont/huskies-server/scripts")
+from pathlib import Path
+print()
+sys.path.append(str(Path(__file__).parent.parent))
 
 import settings
 from MongoEngine import MongoEngine
