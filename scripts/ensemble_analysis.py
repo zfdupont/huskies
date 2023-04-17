@@ -34,12 +34,14 @@ def map_incumbents(plan_20, plan_new, incumbents):
         mapping["party"] = incumbents["Party"][i] #add the incumbent party to the mapping
         #add the 2020 district plan number to the mapping by finding the assignment of the node with the same GEOID20 as the incumbent
         for node in plan_20.graph.nodes:
-            if plan_20.graph.nodes[node]["GEOID20"] == incumbents["GEOID20"][i]:
+            if str(plan_20.graph.nodes[node]["GEOID20"]) == str(incumbents["GEOID20"][i]):
                 mapping["id_20"] = plan_20.assignment[node]
+                break
         #add the new district plan number to the mapping by finding the assignment of the node with the same GEOID20 as the incumbent
         for node in plan_new.graph.nodes:
-            if plan_new.graph.nodes[node]["GEOID20"] == incumbents["GEOID20"][i]:
+            if str(plan_new.graph.nodes[node]["GEOID20"]) == str(incumbents["GEOID20"][i]):
                 mapping["id_new"] = plan_new.assignment[node]
+                break
         incumbent_mappings[incumbents["Name"][i]] = mapping
     return incumbent_mappings
 #find the party split of incumbent winners in a district plan
@@ -147,10 +149,15 @@ def analyze_ensemble(state):
     find_quartiles(b_w_data)
     average_geo_var, average_pop_var = find_averages(incumbent_summary_data)
     ensemble_summary = {"num_plans": len(ensemble), "num_incumbents": len(incumbents), "avg_incumbent_winners": total_winners / len(ensemble), "avg_geo_var":average_geo_var, "avg_pop_var":average_pop_var}
-    ensemble_data = {"ensemble_summary": ensemble_summary, "winner_split": winner_split, "b_w_data": b_w_data, "incumbent_data": incumbent_summary_data}
-    with open('./generated/' + state + '/ensemble/ensemble_data_'+ state +'.json', "w") as outfile:
-        json.dump(ensemble_data, outfile)
+    state_data = {"ensemble_summary": ensemble_summary, "winner_split": winner_split, "b_w_data": b_w_data, "incumbent_data": incumbent_summary_data}
+    return state_data
+
 def analyze_all():
-    analyze_ensemble("GA")
+    state_data_GA = analyze_ensemble("GA")
+    state_data_NY = analyze_ensemble("NY")
+    state_data_IL = analyze_ensemble("IL")
+    ensemble_data = {"GA":state_data_GA, "NY":state_data_NY, "IL":state_data_IL}
+    with open('./generated/ensemble_data.json', "w") as outfile:
+        json.dump(ensemble_data, outfile)
 if __name__ == '__main__':
     analyze_all()
