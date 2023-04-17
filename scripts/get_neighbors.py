@@ -1,6 +1,7 @@
 import geopandas as gpd
 from rtree import index
 from gerrychain import Graph
+from networkx import is_connected, connected_components
 def get_precincts(path):
     gdf = gpd.read_file(path)
     gdf = gdf.to_crs("epsg:2248")
@@ -31,31 +32,25 @@ def make_graph(neighbors, path, gdf):
     graph = Graph(neighbors)
     graph.add_data(gdf)
     graph.geometry = gdf.geometry
+    #remove islands
+    components = list(connected_components(graph))
+    biggest_component_size = max(len(c) for c in components)
+    islands = [c for c in components if len(c) != biggest_component_size]
+    for component in islands:
+        for node in component:
+            graph.remove_node(node)
     graph.to_json(path, include_geometries_as_geojson=True)
-def neighbors_NY():
-    gdf = get_precincts('./mergedNYP.geojson')
+def neighbors(state):
+    statePath = './generated/'+ state + '/preprocess/'
+    gdf = get_precincts(statePath + 'merged'+ state +'P.geojson')
     neighbors = find_neighbors(gdf)
-    make_graph(neighbors, './graphNY.json', gdf)
-    gdf = get_precincts('./mergedNYP20.geojson')
+    make_graph(neighbors, statePath + 'graph'+ state +'.json', gdf)
+    gdf = get_precincts(statePath + 'merged'+ state +'P20.geojson')
     neighbors = find_neighbors(gdf)
-    make_graph(neighbors, './graphNY20.json', gdf)
-def neighbors_GA():
-    gdf = get_precincts('./mergedGAP.geojson')
-    neighbors = find_neighbors(gdf)
-    make_graph(neighbors, './graphGA.json', gdf)
-    gdf = get_precincts('./mergedGAP20.geojson')
-    neighbors = find_neighbors(gdf)
-    make_graph(neighbors, './graphGA20.json', gdf)
-def neighbors_IL():
-    gdf = get_precincts('./mergedILP.geojson')
-    neighbors = find_neighbors(gdf)
-    make_graph(neighbors, './graphIL.json', gdf)
-    gdf = get_precincts('./mergedILP20.geojson')
-    neighbors = find_neighbors(gdf)
-    make_graph(neighbors, './graphIL20.json', gdf)
+    make_graph(neighbors, statePath + 'graph'+ state +'20.json', gdf)
 def neighbors_all():
-    neighbors_NY()
-    neighbors_GA()
-    neighbors_IL()
+    neighbors('NY')
+    neighbors('GA')
+    neighbors('IL')
 if __name__ == '__main__':
     neighbors_all()

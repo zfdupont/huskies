@@ -6,11 +6,11 @@ from collections import defaultdict
 import json
 import numpy as np
 #get the ensemble of district plans
-def get_ensemble():
-    graph = Graph.from_json('./graphGA.json') #get the graph
+def get_ensemble(state):
+    graph = Graph.from_json('./generated/'+ state +'/preprocess/graph'+ state +'.json') #get the graph
     assignments = [] #list of assignments to fill
     for i in range(4):
-        some_assignments = pickle.load(open('assignments_' + str(i) + '.p', 'rb')) #load a pickled list of assignments
+        some_assignments = pickle.load(open('./generated/' + state + '/assignments/assign_' + state + '_' + str(i) + '.p', 'rb')) #load a pickled list of assignments
         assignments += some_assignments #append the list to assignments
     ensemble = [] #create the ensemble list
     for a in assignments:
@@ -77,16 +77,14 @@ def calc_summary_data(plan_20, plan_new, incumbent_mappings, incumbent_summary_d
     for incumbent in incumbent_mappings:
         id_20 = incumbent_mappings[incumbent]["id_20"]
         id_new = incumbent_mappings[incumbent]["id_new"]
-        #find the precincts in the intersection of the 2020 and new plan's districts
+        #find the precincts in the intersection and union of the 2020 and new plan's districts
         intersection = plan_20.parts[id_20].intersection(plan_new.parts[id_new])
+        union = plan_20.parts[id_20].union(plan_new.parts[id_new])
         for variation in variations_needed:
             #calculate the variance
-            common = sum([plan_20.graph.nodes[x][variation] for x in intersection])
-            tot_plan_20 = sum([plan_20.graph.nodes[x][variation] for x in plan_20.parts[id_20]])
-            tot_plan_new = sum([plan_new.graph.nodes[x][variation] for x in plan_new.parts[id_new]])
-            added = tot_plan_new - common
-            lost = tot_plan_20 - common
-            variance = 100 * (1 - common / (common + added  + lost))
+            sum_inter = sum([plan_20.graph.nodes[x][variation] for x in intersection])
+            sum_union = sum([plan_20.graph.nodes[x][variation] for x in union])
+            variance = 100 * (1 - sum_inter / (sum_union))
             #determine the property to update
             if variation == "VAPTOTAL":
                 property = "pop_variations"
@@ -130,10 +128,10 @@ def find_averages(incumbent_summary_data):
         total_pop_var += sum(incumbent_summary_data[incumbent]["pop_variations"])
         total_vars += len(incumbent_summary_data[incumbent]["geo_variations"])
     return total_geo_var / total_vars, total_pop_var / total_vars
-if __name__ == '__main__':
-    ensemble = get_ensemble() #get the ensemble
-    incumbents = pd.read_csv('./data/GA/incumbents_GA.csv') #read csv file of incumbents mapped to home precincts
-    graph_20 = Graph.from_json('./graphGA20.json') #get the 2020 district plan graph
+def analyze_ensemble(state):
+    ensemble = get_ensemble(state) #get the ensemble
+    incumbents = pd.read_csv('./data/'+ state +'/incumbents_'+ state +'.csv') #read csv file of incumbents mapped to home precincts
+    graph_20 = Graph.from_json('./generated/'+ state +'/preprocess/graph'+ state +'20.json') #get the 2020 district plan graph
     plan_20 = GeographicPartition(graph_20, assignment="district_id_20") #convert the graph to a partition using the 2020 district id
     winner_split = defaultdict(int) #create a dictionary to store the winner split data
     total_winners = 0
@@ -150,5 +148,9 @@ if __name__ == '__main__':
     average_geo_var, average_pop_var = find_averages(incumbent_summary_data)
     ensemble_summary = {"num_plans": len(ensemble), "num_incumbents": len(incumbents), "avg_incumbent_winners": total_winners / len(ensemble), "avg_geo_var":average_geo_var, "avg_pop_var":average_pop_var}
     ensemble_data = {"ensemble_summary": ensemble_summary, "winner_split": winner_split, "b_w_data": b_w_data, "incumbent_data": incumbent_summary_data}
-    with open("ensemble_data.json", "w") as outfile:
+    with open('./generated/' + state + '/ensemble/ensemble_data_'+ state +'.json', "w") as outfile:
         json.dump(ensemble_data, outfile)
+def analyze_all():
+    analyze_ensemble("GA")
+if __name__ == '__main__':
+    analyze_all()
