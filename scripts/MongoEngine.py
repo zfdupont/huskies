@@ -18,13 +18,14 @@ class MongoEngine:
         self.db = self.client[db_name]
         self.fs = gridfs.GridFS(self.db)
 
-    def insert_geodataframe(self, gdf : gpd.GeoDataFrame, collection_name, geojson_name):
+    def insert_geodataframe(self, gdf : gpd.GeoDataFrame, collection_name, geojson_state, geojson_name):
         """
         Insert a GeoDataFrame into a specified collection and store its features in the "features" collection.
 
         :param gdf: GeoDataFrame to be inserted.
         :param collection_name: Name of the collection to insert the GeoJSON document into.
         :param geojson_name: Name of the GeoJSON document to be created.
+        :param geojson_state: State the GeoJSON document belongs to.
         """
         
         collection = self.db[collection_name]
@@ -32,13 +33,14 @@ class MongoEngine:
         
         # Insert GeoJSON document
         geojson_document = {
+            'state': geojson_state,
             'name': geojson_name,
-        } | json.loads(gdf.to_json())
-        
-        result = collection.insert_one(geojson_document)
+            'geojson': json.loads(gdf.to_json())
+        }
+        collection.insert_one(geojson_document)
 
 
-    def read_geodataframe(self, collection_name, geojson_name):
+    def read_geodataframe(self, collection_name, geojson_state, geojson_name):
         """
         Read a GeoJSON document from a collection and its features from the "features" collection into a GeoDataFrame.
 
@@ -60,35 +62,6 @@ class MongoEngine:
         gjson = {'type': 'FeatureCollection', 'features': features}
         return gpd.GeoDataFrame.from_features(gjson)
     
-    # EXPERIMENTAL DOES NOT WORK
-    def update_geodataframe(self, gdf, collection_name, geojson_name):
-        """
-        Update the features of a GeoJSON document in the "features" collection based on the provided GeoDataFrame.
-
-        :param gdf: GeoDataFrame containing updated data.
-        :param collection_name: Name of the collection containing the GeoJSON document.
-        :param geojson_name: Name of the GeoJSON document to update.
-        :param query: Dictionary specifying the query to select features to update. Defaults to an empty dictionary ({}).
-        """
-        
-        collection = self.db[collection_name]
-        features_collection = self.db['features']
-        geojson_document = collection.find_one({'name': geojson_name})
-        
-        if geojson_document is None:
-            return
-        
-        geojson_id = geojson_document['_id']
-
-        for _, row in gdf.iterrows():
-            row_dict = row.to_json(default_handler=str)
-            row_query = { 'properties': { 'GEOID20': row_dict['properties']['GEOID20'] } }
-            feature = features_collection.find_one(row_query)
-
-            if feature is not None:
-                update = {'$set': row_dict}
-                features_collection.update_one({'_id': feature['_id']}, update)
-
     def update_ensemble(self, ensemble_data : dict ):
         """
         Update the features of a GeoJSON document in the "features" collection based on the provided GeoDataFrame.
