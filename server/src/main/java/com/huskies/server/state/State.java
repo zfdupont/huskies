@@ -16,7 +16,7 @@ public class State {
     private String id;
     private Set<DistrictPlan> plans;
 
-    private Object ensemble_summary, winner_split, box_with_data, incumbent_data;
+    private Object ensemble_summary, winner_split, box_w_data, incumbent_data;
     public State() {}
 
     public State(String id) {
@@ -57,11 +57,11 @@ public class State {
     }
 
     public Object getBox_with_data() {
-        return box_with_data;
+        return box_w_data;
     }
 
     public void setBox_with_data(Object box_with_data) {
-        this.box_with_data = box_with_data;
+        this.box_w_data = box_with_data;
     }
 
     public Object getIncumbent_data() {
