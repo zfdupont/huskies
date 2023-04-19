@@ -1,7 +1,7 @@
 import geopandas as gpd
 from rtree import index
 from gerrychain import Graph
-from networkx import is_connected, connected_components
+from networkx import connected_components
 def get_precincts(path):
     gdf = gpd.read_file(path)
     gdf = gdf.to_crs("epsg:2248")
@@ -9,18 +9,11 @@ def get_precincts(path):
 def find_neighbors(gdf):
     idx = index.Index()
     for i, geometry in enumerate(gdf.geometry):
-        #store the left, right, up, down boundaries of each geometry alongside index
         idx.insert(i, geometry.bounds)
-    #neighbors (edges) list
     neighbors = {}
     for i, polygon in enumerate(gdf.geometry):
-        # Get the bounds of the polygon
         bounds = polygon.bounds
-        
-        # Find the intersecting bounds in the index
         intersecting = list(idx.intersection(bounds))
-        
-        # Get the neighbors by checking for intersection with other polygons
         neighbors[i] = []
         for j in intersecting:
             if i != j:
@@ -32,7 +25,6 @@ def make_graph(neighbors, path, gdf):
     graph = Graph(neighbors)
     graph.add_data(gdf)
     graph.geometry = gdf.geometry
-    #remove islands
     components = list(connected_components(graph))
     biggest_component_size = max(len(c) for c in components)
     islands = [c for c in components if len(c) != biggest_component_size]
