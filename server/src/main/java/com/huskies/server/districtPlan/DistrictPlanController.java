@@ -51,11 +51,11 @@ public class DistrictPlanController {
     }
 
     @GetMapping(value = "/plan", consumes = MediaType.ALL_VALUE)
-    public ResponseEntity getPlan(@RequestBody Map<String, String> body) throws IOException {
-        String state = body.get("state");
-        String plan = body.get("plan");
+    public ResponseEntity getPlan(@RequestParam Map<String, String> params){
+        String name = params.getOrDefault("plan", "");
+        String state = params.getOrDefault("state", "");
         try {
-            FeatureCollectionPOJO planData = districtPlanService.loadJson(state, plan);
+            FeatureCollectionPOJO planData = districtPlanService.loadJson(state, name);
             return ResponseEntity.status(200).body(planData);
         } catch ( IOException ioe ) {
             return ResponseEntity.status(404).body(ioe.getMessage());
