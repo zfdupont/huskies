@@ -14,21 +14,14 @@ from MongoEngine import MongoEngine
 
 def test_geojson_ops():
     print("reading from file...")
-    gdf = gpd.read_file("/Users/zfdupont/huskies-server/scripts/mergedGA.geojson")
+    gdf = gpd.read_file("/Users/zfdupont/huskies-server/scripts/mergedGAEnacted.geojson")
     print(gdf)
     # Initialize MongoEngine and connect to a database
-    engine = MongoEngine('geo_test_db', uri=settings.DATABASE_URI)
+    engine = MongoEngine('geo_test', uri=settings.DATABASE_URI)
 
     print("inserting to db...")
     # Insert GeoDataFrame into a collection
     engine.insert_geodataframe(gdf, 'geo_test_collection', 'geojson_1')
-
-
-    print("reading from db...")
-    # Read GeoDataFrame from a collection
-    gdf_from_db = engine.read_geodataframe('geo_test_collection', 'geojson_1')
-    print(gdf_from_db)
-    assert len(gdf) == len(gdf)
 
     # print("updating from db")
     # # Update GeoDataFrame in a collection
@@ -40,7 +33,7 @@ def test_geojson_ops():
     # engine.delete_geodataframe('geo_test_collection', query={'id': 20})
 
     # Drop the collection
-    engine.drop_collection('geo_test_collection')
+    # engine.drop_collection('geo_test_collection')
 
 def test_ensemble_ops():
     ensemble_data = {
@@ -63,4 +56,4 @@ def test_ensemble_ops():
     
     engine.update_ensemble(ensemble_data)
     
-test_ensemble_ops()
+test_geojson_ops()

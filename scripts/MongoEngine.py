@@ -1,4 +1,5 @@
 import pymongo
+import gridfs
 import pandas as pd
 import geopandas as gpd
 from bson import json_util, ObjectId
@@ -15,8 +16,9 @@ class MongoEngine:
     def __init__(self, db_name, uri='mongodb://localhost:27017/'):
         self.client = pymongo.MongoClient(uri, maxPoolSize=None)
         self.db = self.client[db_name]
+        self.fs = gridfs.GridFS(self.db)
 
-    def insert_geodataframe(self, gdf, collection_name, geojson_name):
+    def insert_geodataframe(self, gdf : gpd.GeoDataFrame, collection_name, geojson_name):
         """
         Insert a GeoDataFrame into a specified collection and store its features in the "features" collection.
 
@@ -26,31 +28,14 @@ class MongoEngine:
         """
         
         collection = self.db[collection_name]
-        features_collection = self.db['features']
+        # features_collection = self.db['features']
         
         # Insert GeoJSON document
         geojson_document = {
             'name': geojson_name,
-            'type': 'FeatureCollection',
-            'features': []
-        }
+        } | json.loads(gdf.to_json())
+        
         result = collection.insert_one(geojson_document)
-        geojson_id = result.inserted_id
-
-        # Insert features
-        records = json.loads(gdf.to_json())
-        
-        #"anonymous" function
-        def a(feature):
-            feature['plan'] = geojson_id
-            return feature
-        
-        # add FeatureCollection id to populate later
-        
-        # write features in bulk out of order for speed
-        result = features_collection.insert_many(map(a, records['features']), ordered=False)
-        # add ids to featureCollection
-        collection.update_one({'_id': geojson_id}, {'$set': {'features': result.inserted_ids}})
 
 
     def read_geodataframe(self, collection_name, geojson_name):
