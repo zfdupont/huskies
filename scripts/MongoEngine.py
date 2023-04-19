@@ -104,6 +104,20 @@ class MongoEngine:
                 update = {'$set': row_dict}
                 features_collection.update_one({'_id': feature['_id']}, update)
 
+    def update_ensemble(self, ensemble_name, ensemble_data : dict ):
+        """
+        Update the features of a GeoJSON document in the "features" collection based on the provided GeoDataFrame.
+
+        :param ensemble_name: Name of ensemble being updated
+        :param ensemble_data: Document containing new ensemble data
+        """ 
+        collection = self.db['state']
+        update = { '$set' : dict( k:v for k,v  in ensemble_data)}
+        update['plans'] = '$addToSet'
+        query = { 'name': ensemble_name }
+        ensemble_document = collection.update_one(query, update, upsert=True)
+        
+        
 
     def delete_geojson(self, collection_name, geojson_name):
         collection = self.db[collection_name]
