@@ -2,6 +2,7 @@ package com.huskies.server.districtPlan;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.huskies.server.FeatureCollectionPOJO;
 import com.huskies.server.state.Ensemble;
 import com.huskies.server.state.EnsembleRepository;
@@ -68,6 +69,18 @@ public class DistrictPlanService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public FeatureCollectionPOJO loadJson(String stateName, String planName) throws IOException {
+        Path currentRelativePath = Paths.get("");
+        String jsonPath = String.format("%s/scripts/merged%s%s.geojson",
+                currentRelativePath.toAbsolutePath(),
+                stateName,
+                planName);
+        byte[] jsonData = Files.readAllBytes(Paths.get(jsonPath));
+        ObjectMapper objectMapper = new ObjectMapper();
+        FeatureCollectionPOJO f = objectMapper.readValue(jsonData, FeatureCollectionPOJO.class);
+        return f;
     }
 
     public DistrictPlan getDistrictPlan(String name, String state){
