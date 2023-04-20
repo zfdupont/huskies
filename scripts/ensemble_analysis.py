@@ -46,17 +46,23 @@ def calculate_split(plan, incumbent_mappings):
     precincts = plan.graph.nodes
     dem_winners = 0
     rep_winners = 0
-    for incumbent in incumbent_mappings:
-        mapping = incumbent_mappings[incumbent]
-        district = mapping["id_new"]
+    incumbent_winners = 0
+    for district in plan.parts:
         dem_votes = sum([precincts[precinct]["democrat"] for precinct in plan.parts[district]])
         rep_votes = sum([precincts[precinct]["republican"] for precinct in plan.parts[district]])
-        party = incumbent_mappings[incumbent]["incumbent_party"]
-        if dem_votes > rep_votes and party == "D":
+        if dem_votes > rep_votes:
             dem_winners += 1
-        elif rep_votes > dem_votes and party == "R":
+        elif rep_votes > dem_votes:
             rep_winners += 1
-    return str(dem_winners) + "/" + str(rep_winners), rep_winners + dem_winners
+        for incumbent in incumbent_mappings:
+            if incumbent_mappings[incumbent]["id_new"] == district:
+                if incumbent_mappings[incumbent]["incumbent_party"] == "D" and dem_votes > rep_votes:
+                    incumbent_winners += 1
+                    break
+                elif incumbent_mappings[incumbent]["incumbent_party"] == "R" and rep_votes > dem_votes:
+                    incumbent_winners += 1
+                    break
+    return dem_winners, rep_winners, incumbent_winners
 def calc_summary_data(plan_20, plan_new, incumbent_mappings, incumbent_summary_data, box_w_data):
     variations_needed = ["vap_total", "area"]
     box_w_lists = {property:[] for property in box_w_data}
@@ -112,7 +118,7 @@ def analyze_ensemble(state):
     graph_20 = Graph.from_json('./generated/'+ state +'/preprocess/graph'+ state +'20.json')
     plan_20 = GeographicPartition(graph_20, assignment="district_id_20")
     winner_split = defaultdict(int)
-    total_winners = 0
+    total_incumbent_winners = 0
     incumbent_summary_data = {name:{"geo_variations":[],"pop_variations":[], "vap_black_proportions":[], "vap_white_proportions":[], "vap_hisp_proportions":[], "democrat_proportions":[], "republican_proportions":[]} for name in incumbents["name"]}
     box_w_data = setup_box_w_data(len(incumbents))
     least_fair_score = 1
@@ -122,9 +128,9 @@ def analyze_ensemble(state):
     interesting_plans = {"fair_seat_vote":None, "democrat_favored":None, "republican_favored":None, "high_geo_pop_var":None, "fair_geo_pop_var":None}
     for plan in ensemble:
         incumbent_mappings = map_incumbents(plan_20,plan,incumbents)
-        split, winners = calculate_split(plan, incumbent_mappings)
-        winner_split[split] += 1
-        total_winners += winners
+        dem_winners, rep_winners, incumbent_winners = calculate_split(plan, incumbent_mappings)
+        winner_split[str(dem_winners) + "/" + str(rep_winners)] += 1
+        total_incumbent_winners += incumbent_winners
         calc_summary_data(plan_20, plan, incumbent_mappings, incumbent_summary_data, box_w_data)
         find_interesting_plans(plan_20, plan, incumbent_mappings, interesting_criteria, interesting_plans)
     for criteria in interesting_plans:
@@ -132,7 +138,7 @@ def analyze_ensemble(state):
         analyze_plan(plan_20, interesting_plans[criteria], incumbent_mappings, state, criteria)
     find_quartiles(box_w_data)
     average_geo_var, average_pop_var = find_averages(incumbent_summary_data)
-    ensemble_summary = {"num_plans": len(ensemble), "num_incumbents": len(incumbents), "avg_incumbent_winners": total_winners / len(ensemble), "avg_geo_var":average_geo_var, "avg_pop_var":average_pop_var}
+    ensemble_summary = {"num_plans": len(ensemble), "num_incumbents": len(incumbents), "avg_incumbent_winners": total_incumbent_winners / len(ensemble), "avg_geo_var":average_geo_var, "avg_pop_var":average_pop_var}
     state_data = {"ensemble_summary": ensemble_summary, "winner_split": winner_split, "box_w_data": box_w_data, "incumbent_data": incumbent_summary_data}
     return state_data
 def analyze_all():

@@ -55,7 +55,7 @@ def generate_plans(state, num_cores, total_plans, steps):
 def generate_all_plans():
     num_cores = multiprocessing.cpu_count()
     total_plans = 8
-    steps = 50
+    steps = 20
     generate_plans("GA", num_cores, total_plans, steps)
     generate_plans("NY", num_cores, total_plans, steps)
     generate_plans("IL", num_cores, total_plans, steps)
