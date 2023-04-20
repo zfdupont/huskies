@@ -24,6 +24,8 @@ def analyze_plan(plan_20, plan_new, incumbent_mappings, state, reason):
             new_districts[j] = i
     gdf["district_id"] = new_districts
     gdf.set_geometry("geometry")
+    if state == "NY":
+        gdf = gdf.drop(7041)
     gdf_new = gdf.dissolve(by="district_id",aggfunc={key: 'sum' for key in filter(lambda x: x in "pop_total  vap_total  vap_white  vap_black  vap_native  vap_asian  vap_hwn  vap_other  vap_mixed  vap_hisp  republican  democrat".split(), list(gdf.columns))})
     new_cols = ["incumbent_party"]
     for change in changes:
