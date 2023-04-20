@@ -19,6 +19,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -37,54 +38,10 @@ public class DistrictPlanService {
     private MongoTemplate mongoTemplate;
 
 
-    public DistrictPlan findPlan(String planID, String planName){
-        return districtPlanRepo.findByName(planName)
-                .orElse(districtPlanRepo.findById(planID)
-                        .orElseThrow());
-    }
-
-    public FeatureCollectionPOJO loadJson(String planID, String planName) throws IOException {
-        return null;
-//        Path currentRelativePath = Paths.get("");
-//        String jsonPath = String.format("%s/scripts/merged%s.geojson", currentRelativePath.toAbsolutePath(), stateName);
-//        byte[] jsonData = Files.readAllBytes(Paths.get(jsonPath));
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        FeatureCollectionPOJO f = objectMapper.readValue(jsonData, FeatureCollectionPOJO.class);
-//        return f;
-    }
-
-    public void addDistrictPlan(String name, String state, String planData){
-
-        DistrictPlan newPlan = new DistrictPlan();
-        newPlan.setName(name);
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            FeatureCollectionPOJO geoJSON = objectMapper.readValue(planData, FeatureCollectionPOJO.class);
-            newPlan.setGeoJSON(geoJSON);
-            newPlan.setState(state);
-            mongoTemplate.save(newPlan);
-            Query query = new Query(Criteria.where("name").is(state));
-            Update update = new Update().addToSet("plans", newPlan);
-            mongoTemplate.upsert(query, update, Ensemble.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public FeatureCollectionPOJO loadJson(String stateName, String planName) throws IOException {
-        Path currentRelativePath = Paths.get("");
-        String jsonPath = String.format("%s/scripts/merged%s%s.geojson",
-                currentRelativePath.toAbsolutePath(),
-                stateName,
-                planName);
-        byte[] jsonData = Files.readAllBytes(Paths.get(jsonPath));
-        ObjectMapper objectMapper = new ObjectMapper();
-        FeatureCollectionPOJO f = objectMapper.readValue(jsonData, FeatureCollectionPOJO.class);
-        return f;
-    }
-
-    public DistrictPlan getDistrictPlan(String name, String state){
+    public DistrictPlan getDistrictPlan(String state, String name){
         Query query = new Query(Criteria.where("name").is(name).and("state").is(state));
-        return mongoTemplate.findOne(query, DistrictPlan.class);
+        final DistrictPlan plan = mongoTemplate.findOne(query, DistrictPlan.class);
+        if (plan == null) throw new ResourceNotFoundException();
+        return plan;
     }
 }

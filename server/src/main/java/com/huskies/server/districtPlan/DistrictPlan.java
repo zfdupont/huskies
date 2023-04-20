@@ -6,16 +6,13 @@ import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.HashSet;
-import java.util.Set;
-
-@Document("plan")
+@Document("plans")
 @CompoundIndex( def = "{'state' : 1, 'name': 1}", unique = true)
 public class DistrictPlan {
     @Id private ObjectId id;
     @Indexed private String name;
 
-    private FeatureCollectionPOJO geoJSON;
+    private FeatureCollectionPOJO geojson;
     private String state;
 
 
@@ -33,12 +30,12 @@ public class DistrictPlan {
         this.name = name;
     }
 
-    public FeatureCollectionPOJO getGeoJSON() {
-        return geoJSON;
+    public FeatureCollectionPOJO getGeoJson() {
+        return geojson;
     }
 
-    public void setGeoJSON(FeatureCollectionPOJO geoJSON) {
-        this.geoJSON = geoJSON;
+    public void setGeoJson(FeatureCollectionPOJO geojson) {
+        this.geojson = geojson;
     }
 
     public String getState() {
