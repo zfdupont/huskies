@@ -133,21 +133,19 @@ def analyze_ensemble(state):
         total_incumbent_winners += incumbent_winners
         calc_summary_data(plan_20, plan, incumbent_mappings, incumbent_summary_data, box_w_data)
         find_interesting_plans(plan_20, plan, incumbent_mappings, interesting_criteria, interesting_plans)
-    for criteria in interesting_plans:
-        incumbent_mappings = map_incumbents(plan_20, interesting_plans[criteria], incumbents)
-        analyze_plan(plan_20, interesting_plans[criteria], incumbent_mappings, state, criteria)
     find_quartiles(box_w_data)
     average_geo_var, average_pop_var = find_averages(incumbent_summary_data)
     ensemble_summary = {"num_plans": len(ensemble), "num_incumbents": len(incumbents), "avg_incumbent_winners": total_incumbent_winners / len(ensemble), "avg_geo_var":average_geo_var, "avg_pop_var":average_pop_var}
     state_data = {"ensemble_summary": ensemble_summary, "winner_split": winner_split, "box_w_data": box_w_data, "incumbent_data": incumbent_summary_data}
-    return state_data
+    with open('./generated/' + state +'/ensemble_data.json', 'w') as outfile:
+        json.dump(state_data, outfile)
+    for criteria in interesting_plans:
+        incumbent_mappings = map_incumbents(plan_20, interesting_plans[criteria], incumbents)
+        analyze_plan(plan_20, interesting_plans[criteria], incumbent_mappings, state, criteria)
 def analyze_all():
     state_data_GA = analyze_ensemble("GA")
     state_data_NY = analyze_ensemble("NY")
     state_data_IL = analyze_ensemble("IL")
-    ensemble_data = {"GA":state_data_GA, "NY":state_data_NY, "IL":state_data_IL}
-    with open('./generated/ensemble_data.json', "w") as outfile:
-        json.dump(ensemble_data, outfile)
 def plan_test(state):
     incumbents = pd.read_csv('./data/'+ state +'/incumbents_'+ state +'.csv')
     graph_20 = Graph.from_json('./generated/'+ state +'/preprocess/graph'+ state +'20.json')
