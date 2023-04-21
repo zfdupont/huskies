@@ -5,13 +5,15 @@ from functools import partial
 import multiprocessing
 import pickle
 import math
+import random
 def create_partitions(n, state, num_plans, steps):
+    random.seed(n)
     graph = Graph.from_json('./generated/' + state + '/preprocess/graph' + state + '.json')
-    my_updaters = {"population": updaters.Tally("POPTOT", alias="population")}
+    my_updaters = {"population": updaters.Tally("pop_total", alias="population")}
     initial_partition = GeographicPartition(graph, assignment="district_id_21", updaters=my_updaters)
     ideal_population = sum(initial_partition["population"].values()) / len(initial_partition)
     proposal = partial(recom,
-                    pop_col="POPTOT",
+                    pop_col="pop_total",
                     pop_target=ideal_population,
                     epsilon=0.05,
                     node_repeats=2
@@ -52,8 +54,8 @@ def generate_plans(state, num_cores, total_plans, steps):
         p.join()
 def generate_all_plans():
     num_cores = multiprocessing.cpu_count()
-    total_plans = 16
-    steps = 10
+    total_plans = 8
+    steps = 20
     generate_plans("GA", num_cores, total_plans, steps)
     generate_plans("NY", num_cores, total_plans, steps)
     generate_plans("IL", num_cores, total_plans, steps)
