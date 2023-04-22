@@ -48,8 +48,7 @@ class MongoEngine:
         """ 
         collection = self.db['states']
         ensemble_name = ensemble_data['name']
-        update = { '$set' : { k:v for k,v in ensemble_data.items() if k != 'plans' }, 
-                   '$addToSet': {'plans': { '$each': ensemble_data['plans'] } } }
+        update = { '$set' : { k:v for k,v in ensemble_data.items()}}
         query = { 'name': ensemble_name }
         collection.update_one(query, update, upsert=True)
     

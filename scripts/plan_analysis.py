@@ -1,4 +1,5 @@
 import geopandas as gpd
+from settings import HUSKIES_HOME, DATABASE_URI
 def analyze_plan(plan_20, plan_new, incumbent_mappings, state, reason):
     changes = ["vap_total", "area", "vap_black", "vap_white", "vap_hisp","democrat", "republican"]
     for incumbent in incumbent_mappings:
@@ -16,7 +17,7 @@ def analyze_plan(plan_20, plan_new, incumbent_mappings, state, reason):
             incumbent_mappings[incumbent][change + "_lost"] = int(lost)
             variation = added / (common + added)
             incumbent_mappings[incumbent][change + "_variation"] = variation
-    gdf = gpd.read_file('./generated/'+ state +'/preprocess/merged'+ state +'P.geojson')
+    gdf = gpd.read_file(f'{HUSKIES_HOME}/generated/'+ state +'/preprocess/merged'+ state +'P.geojson')
     gdf = gdf.drop(columns='district_id_21')
     new_districts = [0 for x in range(len(gdf))]
     for i in plan_new.parts:
@@ -55,4 +56,5 @@ def analyze_plan(plan_20, plan_new, incumbent_mappings, state, reason):
         gdf_new["incumbent"][incumbent_mappings[mapping]['id_new']] = mapping
         for col in new_cols:
             gdf_new[col][incumbent_mappings[mapping]['id_new']] = incumbent_mappings[mapping][col]
-    gdf_new.to_file('./generated/'+ state +'/interesting/'+ reason +'_plan.geojson', driver='GeoJSON')
+    return gdf_new
+    #gdf_new.to_file(f'{HUSKIES_HOME}/generated/'+ state +'/interesting/'+ reason +'_plan.geojson', driver='GeoJSON')

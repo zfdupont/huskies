@@ -45,7 +45,7 @@ def merge_NY(agg):
     gdf = assign_plan(gdf, f'{HUSKIES_HOME}/data/NY/CON22_June_03_2022.shp', 'district_id_21')
     gdf.to_file(f'{HUSKIES_HOME}/generated/NY/preprocess/mergedNYP.geojson', driver='GeoJSON')
     if agg:
-        gdf = aggregate(gdf, 'district_id_21', "POPTOT  VAPTOTAL  VAPWHITE  VAPBLACK  VAPINAMORAK  VAPASIAN  VAPISLAND  VAPOTHER  VAPMIXED  VAPHISP  2020VTRUMP  2020VBIDEN".split())
+        gdf = aggregate(gdf, 'district_id_21', "pop_total  vap_total  vap_white  vap_black  vap_native  vap_asian  vap_hwn  vap_other  vap_mixed  vap_hisp  democrat  republican".split())
         engine.insert_geodataframe(gdf, 'plans', geojson_state='NY', geojson_name='Enacted')
         # gdf.to_file(f'{HUSKIES_HOME}/genereated/NY/preprocess/mergedNYD.geojson', driver='GeoJSON')
 def merge_GA(agg):
@@ -61,7 +61,7 @@ def merge_GA(agg):
     gdf = assign_plan(gdf,f'{HUSKIES_HOME}/data/GA/GAD.geojson','district_id_21')
     gdf.to_file(f'{HUSKIES_HOME}/generated/GA/preprocess/mergedGAP.geojson', driver='GeoJSON')
     if agg:
-        gdf = aggregate(gdf,'district_id_21',"POPTOT  VAPTOTAL  VAPWHITE  VAPBLACK  VAPINAMORAK  VAPASIAN  VAPISLAND  VAPOTHER  VAPMIXED  VAPHISP  2020VTRUMP  2020VBIDEN".split())
+        gdf = aggregate(gdf,'district_id_21',"pop_total  vap_total  vap_white  vap_black  vap_native  vap_asian  vap_hwn  vap_other  vap_mixed  vap_hisp  democrat  republican".split())
         engine.insert_geodataframe(gdf, 'plans', geojson_state='GA', geojson_name='Enacted')
         # gdf.to_file(f'{HUSKIES_HOME}/generated/GA/preprocess/mergedGAD.geojson', driver='GeoJSON')
 def merge_IL(agg):
@@ -77,7 +77,7 @@ def merge_IL(agg):
     gdf = assign_plan(gdf,f'{HUSKIES_HOME}/data/IL/ILD.geojson','district_id_21')
     gdf.to_file(f"{HUSKIES_HOME}/generated/IL/preprocess/mergedILP.geojson", driver='GeoJSON')
     if agg:
-        gdf = aggregate(gdf,'district_id_21',"POPTOT  VAPTOTAL  VAPWHITE  VAPBLACK  VAPINAMORAK  VAPASIAN  VAPISLAND  VAPOTHER  VAPMIXED  VAPHISP  2020VTRUMP  2020VBIDEN".split())
+        gdf = aggregate(gdf,'district_id_21',"pop_total  vap_total  vap_white  vap_black  vap_native  vap_asian  vap_hwn  vap_other  vap_mixed  vap_hisp  democrat  republican".split())
         engine.insert_geodataframe(gdf, 'plans', geojson_state='IL', geojson_name='Enacted')
         # gdf.to_file(f'{HUSKIES_HOME}/generated/IL/preprocess/mergedILD.geojson', driver='GeoJSON')
 
@@ -86,4 +86,4 @@ def merge_all(agg):
     merge_GA(agg)
     merge_IL(agg)
 if __name__ == '__main__':
-    merge_all()
+    merge_all(True)

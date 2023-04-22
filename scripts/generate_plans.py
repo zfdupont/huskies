@@ -6,9 +6,10 @@ import multiprocessing
 import pickle
 import math
 import random
+from settings import HUSKIES_HOME
 def create_partitions(n, state, num_plans, steps):
     random.seed(n)
-    graph = Graph.from_json('./generated/' + state + '/preprocess/graph' + state + '.json')
+    graph = Graph.from_json(f'{HUSKIES_HOME}/generated/' + state + '/preprocess/graph' + state + '.json')
     my_updaters = {"population": updaters.Tally("pop_total", alias="population")}
     initial_partition = GeographicPartition(graph, assignment="district_id_21", updaters=my_updaters)
     ideal_population = sum(initial_partition["population"].values()) / len(initial_partition)
@@ -41,7 +42,7 @@ def create_partitions(n, state, num_plans, steps):
     assignments = []
     for i in range(len(plans)):
         assignments.append(plans[i].assignment)
-    pickle.dump(assignments, open('./generated/'+ state + '/assignments/assign_' + state + '_' + str(n) + '.p', 'wb'))
+    pickle.dump(assignments, open(f'{HUSKIES_HOME}/generated/'+ state + '/assignments/assign_' + state + '_' + str(n) + '.p', 'wb'))
 def generate_plans(state, num_cores, total_plans, steps):
     num_plans = math.ceil(total_plans / num_cores)
     args = [[i,state, num_plans, steps] for i in range(num_cores)]
