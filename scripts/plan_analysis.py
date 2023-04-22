@@ -1,60 +1,74 @@
 import geopandas as gpd
 from settings import HUSKIES_HOME, DATABASE_URI
-def analyze_plan(plan_20, plan_new, incumbent_mappings, state, reason):
-    changes = ["vap_total", "area", "vap_black", "vap_white", "vap_hisp","democrat", "republican"]
+def calculate_differences(plan_20, plan_new, incumbent_mappings, changes):
     for incumbent in incumbent_mappings:
         id_20 = incumbent_mappings[incumbent]["id_20"]
         id_new = incumbent_mappings[incumbent]["id_new"]
         intersection = plan_20.parts[id_20].intersection(plan_new.parts[id_new])
         for change in changes:
-            common = sum([plan_20.graph.nodes[x][change] for x in intersection])
+            common = sum(plan_20.graph.nodes[x][change] for x in intersection)
             incumbent_mappings[incumbent][change + "_common"] = int(common)
-            tot_plan_20 = sum([plan_20.graph.nodes[x][change] for x in plan_20.parts[id_20]])
-            tot_plan_new = sum([plan_new.graph.nodes[x][change] for x in plan_new.parts[id_new]])
+            tot_plan_20 = sum(plan_20.graph.nodes[x][change] for x in plan_20.parts[id_20])
+            tot_plan_new = sum(plan_new.graph.nodes[x][change] for x in plan_new.parts[id_new])
             added = tot_plan_new - common
             incumbent_mappings[incumbent][change + "_added"] = int(added)
             lost = tot_plan_20 - common
             incumbent_mappings[incumbent][change + "_lost"] = int(lost)
             variation = added / (common + added)
             incumbent_mappings[incumbent][change + "_variation"] = variation
-    gdf = gpd.read_file(f'{HUSKIES_HOME}/generated/'+ state +'/preprocess/merged'+ state +'P.geojson')
-    gdf = gdf.drop(columns='district_id_21')
-    new_districts = [0 for x in range(len(gdf))]
+def precincts_to_districts(plan_new, path, state):
+    precincts = gpd.read_file(path)
+    precincts = precincts.drop(columns='district_id_21')
+    new_districts = [0 for x in range(len(precincts))]
     for i in plan_new.parts:
         for j in plan_new.parts[i]:
             new_districts[j] = i
-    gdf["district_id"] = new_districts
-    gdf.set_geometry("geometry")
+    precincts["district_id"] = new_districts
+    precincts.set_geometry("geometry")
     if state == "NY":
-        gdf = gdf.drop(7041)
-    gdf_new = gdf.dissolve(by="district_id",aggfunc={key: 'sum' for key in filter(lambda x: x in "pop_total  vap_total  vap_white  vap_black  vap_native  vap_asian  vap_hwn  vap_other  vap_mixed  vap_hisp  republican  democrat".split(), list(gdf.columns))})
-    new_cols = ["incumbent_party"]
+        precincts = precincts.drop(7041)
+    new_districts = precincts.dissolve(by="district_id",aggfunc={key: 'sum' for key in filter(lambda x: x in "pop_total  vap_total  vap_white  vap_black  vap_native  vap_asian  vap_hwn  vap_other  vap_mixed  vap_hisp  republican  democrat".split(), list(precincts.columns))})
+    return new_districts
+def add_properties(new_districts, changes):
+    new_properties = ["incumbent_party"]
     for change in changes:
-        new_cols.append(change + "_common")
-        new_cols.append(change + "_added")
-        new_cols.append(change + "_lost")
-        new_cols.append(change + "_variation")
-    gdf_new["incumbent"] = None
-    gdf_new["winner_party"] = None
-    gdf_new["safe_seat"] = False
-    for col in new_cols:
-        gdf_new[col] = None
-    for i in range(len(gdf_new)):
-        dem_votes = gdf["democrat"][i]
-        rep_votes = gdf["republican"][i]
+        new_properties.append(change + "_common")
+        new_properties.append(change + "_added")
+        new_properties.append(change + "_lost")
+        new_properties.append(change + "_variation")
+    new_districts["incumbent"] = None
+    new_districts["winner_party"] = None
+    new_districts["safe_seat"] = False
+    for property in new_properties:
+        new_districts[property] = None
+    new_districts = new_districts.reset_index(drop=True)
+    return new_districts, new_properties
+def calc_safe_seats(new_districts):
+    for i in range(len(new_districts)):
+        dem_votes = new_districts["democrat"][i]
+        rep_votes = new_districts["republican"][i]
         dem_proportion = dem_votes / (dem_votes + rep_votes)
         rep_proportion = rep_votes / (dem_votes + rep_votes)
         if dem_proportion > 0.5:
-            gdf_new["winner_party"][i] = "D"
+            new_districts.loc[i, "winner_party"] = "D"
             if dem_proportion > 0.55:
-                gdf_new["safe_seat"][i] = True
+                new_districts.loc[i, "safe_seat"] = True
         else:
-            gdf_new["winner_party"][i] = "R"
+            new_districts.loc[i, "winner_party"] = "R"
             if rep_proportion > 0.55:
-                gdf_new["safe_seat"][i] = True
+                new_districts.loc[i, "safe_seat"] = True
+    return new_districts
+def fill_new_properties(new_districts, new_properties, incumbent_mappings):
     for mapping in incumbent_mappings:
-        gdf_new["incumbent"][incumbent_mappings[mapping]['id_new']] = mapping
-        for col in new_cols:
-            gdf_new[col][incumbent_mappings[mapping]['id_new']] = incumbent_mappings[mapping][col]
-    return gdf_new
-    #gdf_new.to_file(f'{HUSKIES_HOME}/generated/'+ state +'/interesting/'+ reason +'_plan.geojson', driver='GeoJSON')
+        new_districts.loc[incumbent_mappings[mapping]['id_new'], "incumbent"] = mapping
+        for property in new_properties:
+            new_districts.loc[incumbent_mappings[mapping]['id_new'], property] = incumbent_mappings[mapping][property]
+    return new_districts
+def analyze_plan(plan_20, plan_new, incumbent_mappings, state):
+    changes = ["vap_total", "area", "vap_black", "vap_white", "vap_hisp","democrat", "republican"]
+    calculate_differences(plan_20, plan_new, incumbent_mappings, changes)
+    new_districts = precincts_to_districts(plan_new, f'{HUSKIES_HOME}/generated/'+ state +'/preprocess/merged'+ state +'P.geojson', state)
+    new_districts, new_properties = add_properties(new_districts, changes)
+    new_districts = calc_safe_seats(new_districts)
+    new_districts = fill_new_properties(new_districts, new_properties, incumbent_mappings)
+    return new_districts
