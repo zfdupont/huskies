@@ -1,22 +1,25 @@
-def calculate_split(plan, incumbent_mappings):
+def calculate_winners(plan, incumbent_mappings):
     precincts = plan.graph.nodes
     dem_winners = 0
     rep_winners = 0
+    already_calculated = set()
     for incumbent in incumbent_mappings:
         mapping = incumbent_mappings[incumbent]
         district = mapping["id_new"]
-        dem_votes = sum([precincts[precinct]["democrat"] for precinct in plan.parts[district]])
-        rep_votes = sum([precincts[precinct]["republican"] for precinct in plan.parts[district]])
-        party = incumbent_mappings[incumbent]["incumbent_party"]
-        if dem_votes > rep_votes and party == "D":
-            dem_winners += 1
-        elif rep_votes > dem_votes and party == "R":
-            rep_winners += 1
+        if district not in already_calculated:
+            already_calculated.add(district)
+            dem_votes = sum(precincts[precinct]["democrat"] for precinct in plan.parts[district])
+            rep_votes = sum(precincts[precinct]["republican"] for precinct in plan.parts[district])
+            party = incumbent_mappings[incumbent]["incumbent_party"]
+            if dem_votes > rep_votes and party == "D":
+                dem_winners += 1
+            elif rep_votes > dem_votes and party == "R":
+                rep_winners += 1
     return dem_winners, rep_winners
 def analyze_seats(plan, incumbent_mappings, interesting_criteria, interesting_plans):
-    dem_winners, rep_winners = calculate_split(plan, incumbent_mappings)
-    dem_votes = sum([plan.graph.nodes[precinct]["democrat"] for precinct in plan.graph.nodes])
-    rep_votes = sum([plan.graph.nodes[precinct]["republican"] for precinct in plan.graph.nodes])
+    dem_winners, rep_winners = calculate_winners(plan, incumbent_mappings)
+    dem_votes = sum(plan.graph.nodes[precinct]["democrat"] for precinct in plan.graph.nodes)
+    rep_votes = sum(plan.graph.nodes[precinct]["republican"] for precinct in plan.graph.nodes)
     seat_vote_difference = abs((dem_votes / (dem_votes + rep_votes)) - (dem_winners / (dem_winners + rep_winners)))
     if seat_vote_difference < interesting_criteria["fairest_seat_vote"]:
         interesting_criteria["fairest_seat_vote"] = seat_vote_difference
@@ -34,14 +37,12 @@ def analyze_geo_pop_var(plan_20, plan_new, incumbent_mappings, interesting_crite
     for incumbent in incumbent_mappings:
         id_20 = incumbent_mappings[incumbent]["id_20"]
         id_new = incumbent_mappings[incumbent]["id_new"]
-        intersection = plan_20.parts[id_20].intersection(plan_new.parts[id_new])
-        area_common = sum([plan_new.graph.nodes[x]['area'] for x in intersection])
-        area_total = sum([plan_new.graph.nodes[x]['area'] for x in plan_new.parts[id_new]])
-        area_added = area_total - area_common
+        precincts_added = plan_new.parts[id_new] - plan_20.parts[id_20]
+        area_added = sum(plan_new.graph.nodes[precinct]['area'] for precinct in precincts_added)
+        area_total = sum(plan_new.graph.nodes[precinct]['area'] for precinct in plan_new.parts[id_new])
         area_variation = area_added / area_total
-        pop_common = sum([plan_new.graph.nodes[x]['vap_total'] for x in intersection])
-        pop_total = sum([plan_new.graph.nodes[x]['vap_total'] for x in plan_new.parts[id_new]])
-        pop_added = pop_total - pop_common
+        pop_added = sum(plan_new.graph.nodes[precinct]['vap_total'] for precinct in precincts_added)
+        pop_total = sum(plan_new.graph.nodes[precinct]['vap_total'] for precinct in plan_new.parts[id_new])
         pop_variation = pop_added / pop_total
         total_geo_pop_var += area_variation + pop_variation
         if incumbent_mappings[incumbent]["incumbent_party"] == "D":

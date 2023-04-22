@@ -2,7 +2,7 @@ import pandas as pd
 import geopandas as gpd
 import maup
 import numpy as np
-from MongoEngine import MongoEngine
+from mongo_engine import MongoEngine
 from settings import HUSKIES_HOME, DATABASE_URI
 
 engine = MongoEngine("dev", uri=DATABASE_URI)
