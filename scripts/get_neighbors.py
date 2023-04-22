@@ -2,6 +2,7 @@ import geopandas as gpd
 from rtree import index
 from gerrychain import Graph
 from networkx import connected_components
+from settings import HUSKIES_HOME
 def get_precincts(path):
     gdf = gpd.read_file(path)
     gdf = gdf.to_crs("epsg:2248")
@@ -33,7 +34,7 @@ def make_graph(neighbors, path, gdf):
             graph.remove_node(node)
     graph.to_json(path, include_geometries_as_geojson=True)
 def neighbors(state):
-    statePath = './generated/'+ state + '/preprocess/'
+    statePath = f'{HUSKIES_HOME}/generated/'+ state + '/preprocess/'
     gdf = get_precincts(statePath + 'merged'+ state +'P.geojson')
     neighbors = find_neighbors(gdf)
     make_graph(neighbors, statePath + 'graph'+ state +'.json', gdf)

@@ -7,11 +7,13 @@ import numpy as np
 import multiprocessing
 from plan_analysis import analyze_plan
 from interesting_plan import find_interesting_plans
+from settings import HUSKIES_HOME, DATABASE_URI
+from MongoEngine import MongoEngine
 def get_ensemble(state):
-    graph = Graph.from_json('./generated/'+ state +'/preprocess/graph'+ state +'.json')
+    graph = Graph.from_json(f'{HUSKIES_HOME}/generated/'+ state +'/preprocess/graph'+ state +'.json')
     assignments = []
     for i in range(multiprocessing.cpu_count()):
-        some_assignments = pickle.load(open('./generated/' + state + '/assignments/assign_' + state + '_' + str(i) + '.p', 'rb')) #load a pickled list of assignments
+        some_assignments = pickle.load(open(f'{HUSKIES_HOME}/generated/' + state + '/assignments/assign_' + state + '_' + str(i) + '.p', 'rb')) #load a pickled list of assignments
         assignments += some_assignments
     ensemble = []
     for a in assignments:
@@ -42,7 +44,7 @@ def map_incumbents(plan_20, plan_new, incumbents):
                 break
         incumbent_mappings[incumbents["name"][i]] = mapping
     return incumbent_mappings
-def calculate_split(plan, incumbent_mappings):
+def calculate_winners(plan, incumbent_mappings):
     precincts = plan.graph.nodes
     dem_winners = 0
     rep_winners = 0
@@ -114,8 +116,8 @@ def find_averages(incumbent_summary_data):
 
 def analyze_ensemble(state):
     ensemble = get_ensemble(state)
-    incumbents = pd.read_csv('./data/'+ state +'/incumbents_'+ state +'.csv')
-    graph_20 = Graph.from_json('./generated/'+ state +'/preprocess/graph'+ state +'20.json')
+    incumbents = pd.read_csv(f'{HUSKIES_HOME}/data/'+ state +'/incumbents_'+ state +'.csv')
+    graph_20 = Graph.from_json(f'{HUSKIES_HOME}/generated/'+ state +'/preprocess/graph'+ state +'20.json')
     plan_20 = GeographicPartition(graph_20, assignment="district_id_20")
     winner_split = defaultdict(int)
     total_incumbent_winners = 0
@@ -128,7 +130,7 @@ def analyze_ensemble(state):
     interesting_plans = {"fair_seat_vote":None, "democrat_favored":None, "republican_favored":None, "high_geo_pop_var":None, "fair_geo_pop_var":None}
     for plan in ensemble:
         incumbent_mappings = map_incumbents(plan_20,plan,incumbents)
-        dem_winners, rep_winners, incumbent_winners = calculate_split(plan, incumbent_mappings)
+        dem_winners, rep_winners, incumbent_winners = calculate_winners(plan, incumbent_mappings)
         winner_split[str(dem_winners) + "/" + str(rep_winners)] += 1
         total_incumbent_winners += incumbent_winners
         calc_summary_data(plan_20, plan, incumbent_mappings, incumbent_summary_data, box_w_data)
@@ -136,21 +138,24 @@ def analyze_ensemble(state):
     find_quartiles(box_w_data)
     average_geo_var, average_pop_var = find_averages(incumbent_summary_data)
     ensemble_summary = {"num_plans": len(ensemble), "num_incumbents": len(incumbents), "avg_incumbent_winners": total_incumbent_winners / len(ensemble), "avg_geo_var":average_geo_var, "avg_pop_var":average_pop_var}
-    state_data = {"ensemble_summary": ensemble_summary, "winner_split": winner_split, "box_w_data": box_w_data, "incumbent_data": incumbent_summary_data}
-    with open('./generated/' + state +'/ensemble_data.json', 'w') as outfile:
-        json.dump(state_data, outfile)
+    state_data = {"name": state, "ensemble_summary": ensemble_summary, "winner_split": winner_split, "box_w_data": box_w_data, "incumbent_data": incumbent_summary_data}
+    engine = MongoEngine('huskies', uri=DATABASE_URI)
+    engine.update_ensemble(state_data)
     for criteria in interesting_plans:
         incumbent_mappings = map_incumbents(plan_20, interesting_plans[criteria], incumbents)
-        analyze_plan(plan_20, interesting_plans[criteria], incumbent_mappings, state, criteria)
+        interesting_plan = analyze_plan(plan_20, interesting_plans[criteria], incumbent_mappings, state, criteria)
+        engine.insert_geodataframe(interesting_plan, 'plan', state + "_" + criteria, state)
+    #with open(f'{HUSKIES_HOME}/generated/' + state +'/ensemble_data.json', 'w') as outfile:
+    #    json.dump(state_data, outfile)
 def analyze_all():
     state_data_GA = analyze_ensemble("GA")
     state_data_NY = analyze_ensemble("NY")
     state_data_IL = analyze_ensemble("IL")
 def plan_test(state):
-    incumbents = pd.read_csv('./data/'+ state +'/incumbents_'+ state +'.csv')
-    graph_20 = Graph.from_json('./generated/'+ state +'/preprocess/graph'+ state +'20.json')
+    incumbents = pd.read_csv(f'{HUSKIES_HOME}/data/'+ state +'/incumbents_'+ state +'.csv')
+    graph_20 = Graph.from_json(f'{HUSKIES_HOME}/generated/'+ state +'/preprocess/graph'+ state +'20.json')
     plan_20 = GeographicPartition(graph_20, assignment="district_id_20")
-    graph_new = Graph.from_json('./generated/'+ state +'/preprocess/graph'+ state +'.json')
+    graph_new = Graph.from_json(f'{HUSKIES_HOME}/generated/'+ state +'/preprocess/graph'+ state +'.json')
     plan_new = GeographicPartition(graph_new, assignment="district_id_21")
     incumbent_mappings = map_incumbents(plan_20,plan_new,incumbents)
     analyze_plan(plan_20,plan_new,incumbent_mappings,state,"current")
