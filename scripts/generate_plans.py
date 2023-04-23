@@ -45,10 +45,10 @@ def create_partitions(n, state, num_plans, recom_steps):
 def generate_plans(state, num_cores, total_plans, recom_steps):
     num_plans = math.ceil(total_plans / num_cores)
     args = [[i,state, num_plans, recom_steps] for i in range(num_cores)]
-    processes = []
+    processes = set()
     for arg in args:
         p = multiprocessing.Process(target=create_partitions, args=arg)
-        processes.append(p)
+        processes.add(p)
         p.start()
     for p in processes:
         p.join()
