@@ -15,12 +15,12 @@ def find_neighbors(gdf):
     for i, polygon in enumerate(gdf.geometry):
         bounds = polygon.bounds
         intersecting = list(idx.intersection(bounds))
-        neighbors[i] = []
+        neighbors[i] = set()
         for j in intersecting:
             if i != j:
                 other_polygon = gdf.iloc[j].geometry
                 if polygon.distance(other_polygon) < 200:
-                    neighbors[i].append(j)
+                    neighbors[i].add(j)
     return neighbors
 def make_graph(neighbors, path, gdf):
     graph = Graph(neighbors)

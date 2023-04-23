@@ -20,13 +20,13 @@ def get_ensemble(state):
         ensemble.append(GeographicPartition(graph, a))
     return ensemble
 def setup_box_w_data(num_incumbents):
-    properties = ["geo_variations","pop_variations","vap_white_proportions","vap_black_proportions", "vap_hisp_proportions","democrat_proportions", "republican_proportions"]
-    box_w_data = {}
+    properties = {"geo_variations","pop_variations","vap_white_proportions","vap_black_proportions", "vap_hisp_proportions","democrat_proportions", "republican_proportions"}
+    box_w_data = dict()
     for property in properties:
         box_w_data[property] = [[] for x in range(num_incumbents)]
     return box_w_data
 def map_incumbents(plan_20, plan_new, incumbents):
-    incumbent_mappings = {}
+    incumbent_mappings = dict()
     for i in range(len(incumbents)):
         mapping = dict()
         mapping["incumbent_party"] = incumbents["party"][i]
@@ -62,7 +62,7 @@ def calculate_split(plan, incumbent_mappings):
                     break
     return dem_winners, rep_winners, incumbent_winners
 def summary_and_box_w_data(plan_20, plan_new, incumbent_mappings, incumbent_summary_data, box_w_data):
-    variations_needed = ["vap_total", "area"]
+    variations_needed = {"vap_total", "area"}
     box_w_lists = {property:[] for property in box_w_data}
     for incumbent in incumbent_mappings:
         id_20 = incumbent_mappings[incumbent]["id_20"]
@@ -78,7 +78,7 @@ def summary_and_box_w_data(plan_20, plan_new, incumbent_mappings, incumbent_summ
                 summary_property = "geo_variations"
             incumbent_summary_data[incumbent][summary_property].append(variation)
             box_w_lists[summary_property].append(variation)
-        demographics_needed = ["vap_black", "vap_white", "vap_hisp", "democrat", "republican"]
+        demographics_needed = {"vap_black", "vap_white", "vap_hisp", "democrat", "republican"}
         for demographic in demographics_needed:
             demographic_sum = sum(plan_new.graph.nodes[x][demographic] for x in plan_new.parts[id_new])
             if demographic == "democrat" or demographic == "republican":
