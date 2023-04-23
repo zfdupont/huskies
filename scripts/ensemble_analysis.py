@@ -133,14 +133,14 @@ def analyze_ensemble(state):
     ensemble_summary = {"num_plans": len(ensemble), "num_incumbents": len(incumbents), "avg_incumbent_winners": total_incumbent_winners / len(ensemble), "avg_geo_var":average_geo_var, "avg_pop_var":average_pop_var}
     state_data = {"name": state, "ensemble_summary": ensemble_summary, "winner_split": winner_split, "box_w_data": box_w_data, "incumbent_data": incumbent_summary_data}
     engine = MongoEngine('huskies', uri=DATABASE_URI)
-    #engine.update_ensemble(state_data)
+    engine.update_ensemble(state_data)
     for criteria in interesting_plans:
         incumbent_mappings = map_incumbents(plan_20, interesting_plans[criteria], incumbents)
         interesting_plan = analyze_plan(plan_20, interesting_plans[criteria], incumbent_mappings, state)
-        #engine.insert_geodataframe(interesting_plan, 'plan', state + "_" + criteria, state)
-        interesting_plan.to_file(f'{HUSKIES_HOME}/generated/'+ state +'/interesting/'+ criteria +'_plan.geojson', driver='GeoJSON')
-    with open(f'{HUSKIES_HOME}/generated/' + state +'/ensemble_data.json', 'w') as outfile:
-        json.dump(state_data, outfile)
+        engine.insert_geodataframe(interesting_plan, 'plan', state + "_" + criteria, state)
+        #interesting_plan.to_file(f'{HUSKIES_HOME}/generated/'+ state +'/interesting/'+ criteria +'_plan.geojson', driver='GeoJSON')
+    #with open(f'{HUSKIES_HOME}/generated/' + state +'/ensemble_data.json', 'w') as outfile:
+    #    json.dump(state_data, outfile)
 def analyze_all():
     analyze_ensemble("GA")
     analyze_ensemble("NY")
