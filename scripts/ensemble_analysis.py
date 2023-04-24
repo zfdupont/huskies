@@ -10,14 +10,12 @@ from interesting_plan import find_interesting_plans
 from settings import HUSKIES_HOME, DATABASE_URI
 from mongo_engine import MongoEngine
 def get_ensemble(state):
-    graph = Graph.from_json(f'{HUSKIES_HOME}/generated/'+ state +'/preprocess/graph'+ state +'.json')
+    graph = Graph.from_json(f'{HUSKIES_HOME}/generated/{state}/preprocess/graph{state}.json')
     assignments = []
     for i in range(multiprocessing.cpu_count()):
-        some_assignments = pickle.load(open(f'{HUSKIES_HOME}/generated/' + state + '/assignments/assign_' + state + '_' + str(i) + '.p', 'rb')) #load a pickled list of assignments
+        some_assignments = pickle.load(open(f'{HUSKIES_HOME}/generated/{state}/assignments/assign_{state}_{str(i)}.p', 'rb')) #load a pickled list of assignments
         assignments += some_assignments
-    ensemble = []
-    for a in assignments:
-        ensemble.append(GeographicPartition(graph, a))
+    ensemble = [GeographicPartition(graph, a) for a in assignments]
     return ensemble
 def setup_box_w_data(num_incumbents):
     properties = {"geo_variations","pop_variations","vap_white_proportions","vap_black_proportions", "vap_hisp_proportions","democrat_proportions", "republican_proportions"}
@@ -30,13 +28,13 @@ def map_incumbents(plan_20, plan_new, incumbents):
     for i in range(len(incumbents)):
         mapping = dict()
         mapping["incumbent_party"] = incumbents["party"][i]
-        for node in plan_20.graph.nodes:
-            if str(plan_20.graph.nodes[node]["geoid20"]) == str(incumbents["geoid20"][i]):
-                mapping["id_20"] = plan_20.assignment[node]
+        for precinct in plan_20.graph.nodes:
+            if str(plan_20.graph.nodes[precinct]["geoid20"]) == str(incumbents["geoid20"][i]):
+                mapping["id_20"] = plan_20.assignment[precinct]
                 break
-        for node in plan_new.graph.nodes:
-            if str(plan_new.graph.nodes[node]["geoid20"]) == str(incumbents["geoid20"][i]):
-                mapping["id_new"] = plan_new.assignment[node]
+        for precinct in plan_new.graph.nodes:
+            if str(plan_new.graph.nodes[precinct]["geoid20"]) == str(incumbents["geoid20"][i]):
+                mapping["id_new"] = plan_new.assignment[precinct]
                 break
         incumbent_mappings[incumbents["name"][i]] = mapping
     return incumbent_mappings
@@ -61,6 +59,7 @@ def calculate_split(plan, incumbent_mappings):
                     incumbent_winners += 1
                     break
     return dem_winners, rep_winners, incumbent_winners
+#remove box_w_lists
 def summary_and_box_w_data(plan_20, plan_new, incumbent_mappings, incumbent_summary_data, box_w_data):
     variations_needed = {"vap_total", "area"}
     box_w_lists = {property:[] for property in box_w_data}
@@ -80,9 +79,12 @@ def summary_and_box_w_data(plan_20, plan_new, incumbent_mappings, incumbent_summ
             box_w_lists[summary_property].append(variation)
         demographics_needed = {"vap_black", "vap_white", "vap_hisp", "democrat", "republican"}
         for demographic in demographics_needed:
-            demographic_sum = sum(plan_new.graph.nodes[x][demographic] for x in plan_new.parts[id_new])
+            demographic_sum = sum(plan_new.graph.nodes[precinct][demographic] 
+                                  for precinct in plan_new.parts[id_new])
             if demographic == "democrat" or demographic == "republican":
-                pop_sum = sum(plan_new.graph.nodes[x]["democrat"] + plan_new.graph.nodes[x]["republican"] for x in plan_new.parts[id_new])
+                pop_sum = sum(plan_new.graph.nodes[x]["democrat"] + 
+                              plan_new.graph.nodes[x]["republican"] 
+                              for x in plan_new.parts[id_new])
             else:
                 pop_sum = sum(plan_new.graph.nodes[x]["vap_total"] for x in plan_new.parts[id_new])
             proportion = demographic_sum / pop_sum
@@ -111,15 +113,22 @@ def find_averages(incumbent_summary_data):
 
 def analyze_ensemble(state):
     ensemble = get_ensemble(state)
-    incumbents = pd.read_csv(f'{HUSKIES_HOME}/data/'+ state +'/incumbents_'+ state +'.csv')
-    graph_20 = Graph.from_json(f'{HUSKIES_HOME}/generated/'+ state +'/preprocess/graph'+ state +'20.json')
+    incumbents = pd.read_csv(f'{HUSKIES_HOME}/data/{state}/incumbents_{state}.csv')
+    graph_20 = Graph.from_json(f'{HUSKIES_HOME}/generated/{state}/preprocess/graph{state}20.json')
     plan_20 = GeographicPartition(graph_20, assignment="district_id_20")
-    winner_split = defaultdict(int)
+    winner_split = defaultdict(int) #look into collections.counter
     total_incumbent_winners = 0
-    incumbent_summary_data = {name:{"geo_variations":[],"pop_variations":[], "vap_black_proportions":[], "vap_white_proportions":[], "vap_hisp_proportions":[], "democrat_proportions":[], "republican_proportions":[]} for name in incumbents["name"]}
+    incumbent_summary_data = {name:{"geo_variations":[],
+                                    "pop_variations":[],
+                                    "vap_black_proportions":[],
+                                    "vap_white_proportions":[],
+                                    "vap_hisp_proportions":[],
+                                    "democrat_proportions":[],
+                                    "republican_proportions":[]}
+                                    for name in incumbents["name"]}
     box_w_data = setup_box_w_data(len(incumbents))
-    fair_score_init, favored_score_init, var_score_init = 1, -100, 0
-    interesting_criteria = {"fairest_seat_vote":fair_score_init,"most_democrat_favored":favored_score_init, "most_republican_favored":favored_score_init, "highest_geo_pop_var":var_score_init, "fairest_geo_pop_var":fair_score_init}
+    FAIR_SCORE_INIT, FAVORED_SCORE_INIT, VAR_SCORE_INIT = 1, -100, 0
+    interesting_criteria = {"fairest_seat_vote":FAIR_SCORE_INIT,"most_democrat_favored":FAVORED_SCORE_INIT, "most_republican_favored":FAVORED_SCORE_INIT, "highest_geo_pop_var":VAR_SCORE_INIT, "fairest_geo_pop_var":FAIR_SCORE_INIT}
     interesting_plans = {"fair_seat_vote":None, "democrat_favored":None, "republican_favored":None, "high_geo_pop_var":None, "fair_geo_pop_var":None}
     for plan in ensemble:
         incumbent_mappings = map_incumbents(plan_20,plan,incumbents)
@@ -137,9 +146,9 @@ def analyze_ensemble(state):
     for criteria in interesting_plans:
         incumbent_mappings = map_incumbents(plan_20, interesting_plans[criteria], incumbents)
         interesting_plan = analyze_plan(plan_20, interesting_plans[criteria], incumbent_mappings, state)
-        engine.insert_geodataframe(interesting_plan, 'plan', state + "_" + criteria, state)
-        #interesting_plan.to_file(f'{HUSKIES_HOME}/generated/'+ state +'/interesting/'+ criteria +'_plan.geojson', driver='GeoJSON')
-    #with open(f'{HUSKIES_HOME}/generated/' + state +'/ensemble_data.json', 'w') as outfile:
+        engine.insert_geodataframe(interesting_plan, 'plans', state + "_" + criteria, state)
+        #interesting_plan.to_file(f'{HUSKIES_HOME}/generated/{state}/interesting/{criteria}_plan.geojson', driver='GeoJSON')
+    #with open(f'{HUSKIES_HOME}/generated/{state}/ensemble_data.json', 'w') as outfile:
     #    json.dump(state_data, outfile)
 def analyze_all():
     analyze_ensemble("GA")

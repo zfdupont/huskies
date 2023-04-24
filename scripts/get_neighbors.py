@@ -5,7 +5,8 @@ from networkx import connected_components
 from settings import HUSKIES_HOME
 def get_precincts(path):
     gdf = gpd.read_file(path)
-    gdf = gdf.to_crs("epsg:2248")
+    FEET_CRS = "epsg:2248"
+    gdf = gdf.to_crs(FEET_CRS)
     return gdf
 def find_neighbors(gdf):
     idx = index.Index()
@@ -19,7 +20,8 @@ def find_neighbors(gdf):
         for j in intersecting:
             if i != j:
                 other_polygon = gdf.iloc[j].geometry
-                if polygon.distance(other_polygon) < 200:
+                NEIGHBOR_DISTANCE_MAX = 200
+                if polygon.distance(other_polygon) < NEIGHBOR_DISTANCE_MAX:
                     neighbors[i].add(j)
     return neighbors
 def make_graph(neighbors, path, gdf):
@@ -34,13 +36,13 @@ def make_graph(neighbors, path, gdf):
             graph.remove_node(node)
     graph.to_json(path, include_geometries_as_geojson=True)
 def neighbors(state):
-    statePath = f'{HUSKIES_HOME}/generated/'+ state + '/preprocess/'
-    gdf = get_precincts(statePath + 'merged'+ state +'P.geojson')
+    statePath = f'{HUSKIES_HOME}/generated/{state}/preprocess/'
+    gdf = get_precincts(f'{statePath}merged{state}P.geojson')
     neighbors = find_neighbors(gdf)
-    make_graph(neighbors, statePath + 'graph'+ state +'.json', gdf)
-    gdf = get_precincts(statePath + 'merged'+ state +'P20.geojson')
+    make_graph(neighbors, f'{statePath}graph{state}.json', gdf)
+    gdf = get_precincts(f'{statePath}merged{state}P20.geojson')
     neighbors = find_neighbors(gdf)
-    make_graph(neighbors, statePath + 'graph'+ state +'20.json', gdf)
+    make_graph(neighbors, f'{statePath}graph{state}20.json', gdf)
 def neighbors_all():
     neighbors('NY')
     neighbors('GA')
