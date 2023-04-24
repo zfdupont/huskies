@@ -23,7 +23,7 @@ def assign_plan(precincts, path, label):
     districts = gpd.read_file(path)
     if path == f'{HUSKIES_HOME}/data/NY/CON22_June_03_2022.shp':
         districts = districts.dissolve(by="DISTRICT")
-    if districts.crs != precincts.crs:
+    if districts.crs != precincts.crs: #might be better to set crs
         districts = districts.to_crs(precincts.crs)
     assignments = maup.assign(precincts, districts)
     precincts[label] = assignments
@@ -35,11 +35,11 @@ def merge_NY(agg):
     gdf = get_bounds(f"{HUSKIES_HOME}/data/NY/ny_vtd_2020_bound.shp", ['NAME20','GEOID20','ALAND20','geometry'])
     e_data = get_data(f"{HUSKIES_HOME}/data/NY/ny_2020_2020_vtd.csv", ['GEOID20','R_2020_pres','D_2020_pres'])
     d_data = get_data(f"{HUSKIES_HOME}/data/NY/ny_pl2020_vtd.csv", ['GEOID20','TOTAL_ADJ','TOTAL_VAP_ADJ','WHITE_VAP_ADJ','BLACK_VAP_ADJ','AMIND_VAP_ADJ','ASIAN_VAP_ADJ','HWN_VAP_ADJ','OTHER_VAP_ADJ','MULTI_VAP_ADJ','HISP_VAP_ADJ'])
-    gdf['GEOID20']=gdf['GEOID20'].astype(np.int64)
+    gdf['GEOID20']=gdf['GEOID20'].astype(np.int64) #fix
     gdf = merge_data(gdf, "GEOID20", [e_data, d_data])
     gdf = gdf.rename(columns={'ALAND20':'area','R_2020_pres': 'republican', 'D_2020_pres': 'democrat','TOTAL_ADJ':'pop_total', 'TOTAL_VAP_ADJ':'vap_total', 'WHITE_VAP_ADJ':'vap_white', 'BLACK_VAP_ADJ':'vap_black','AMIND_VAP_ADJ':'vap_native','ASIAN_VAP_ADJ':'vap_asian','HWN_VAP_ADJ':'vap_hwn','OTHER_VAP_ADJ':'vap_other','MULTI_VAP_ADJ':'vap_mixed','HISP_VAP_ADJ':'vap_hisp'})
     gdf.columns = gdf.columns.str.lower()
-    gdf = gpd.GeoDataFrame(gdf, geometry='geometry')
+    gdf = gpd.GeoDataFrame(gdf, geometry='geometry') #check if needed
     gdf20 = assign_plan(gdf,f'{HUSKIES_HOME}/data/NY/ny_cong_2012_to_2021.shp','district_id_20')
     gdf20.to_file(f'{HUSKIES_HOME}/generated/NY/preprocess/mergedNYP20.geojson', driver='GeoJSON')
     gdf = assign_plan(gdf, f'{HUSKIES_HOME}/data/NY/CON22_June_03_2022.shp', 'district_id_21')

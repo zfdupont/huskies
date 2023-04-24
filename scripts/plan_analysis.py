@@ -67,7 +67,7 @@ def fill_new_properties(new_districts, new_properties, incumbent_mappings):
 def analyze_plan(plan_20, plan_new, incumbent_mappings, state):
     changes = {"vap_total", "area", "vap_black", "vap_white", "vap_hisp","democrat", "republican"}
     calculate_differences(plan_20, plan_new, incumbent_mappings, changes)
-    new_districts = precincts_to_districts(plan_new, f'{HUSKIES_HOME}/generated/'+ state +'/preprocess/merged'+ state +'P.geojson', state)
+    new_districts = precincts_to_districts(plan_new, f'{HUSKIES_HOME}/generated/{state}/preprocess/merged{state}P.geojson', state)
     new_districts, new_properties = add_properties(new_districts, changes)
     new_districts = calc_safe_seats(new_districts)
     new_districts = fill_new_properties(new_districts, new_properties, incumbent_mappings)
