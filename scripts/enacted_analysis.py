@@ -1,10 +1,9 @@
-from settings import HUSKIES_HOME, DATABASE_URI
+from settings import HUSKIES_HOME
 import geopandas as gpd
 import pandas as pd
 from gerrychain import Graph, GeographicPartition
 from ensemble_analysis import map_incumbents
 from plan_analysis import calculate_differences
-from mongo_engine import MongoEngine
 def setup_district_data(state, election_results, plan_21):
     district_data = {district:{"incumbent":None, "democrat_candidate": "Democrat Candidate",
                                "republican_candidate": "Republican Candidate", "democrat_votes":0,
@@ -76,8 +75,6 @@ def analyze_enacted(state):
     election_properties = {"incumbent", "democrat_candidate", "republican_candidate",
                       "democrat_votes","republican_votes", "winner"}
     enacted_districts = fill_properties(enacted_districts, election_properties, district_data, new_properties, incumbent_mappings)
-    engine = MongoEngine('huskies', uri=DATABASE_URI)
-    #engine.insert_geodataframe(enacted_plan, 'plans', state, "enacted")
     enacted_districts.to_file(f'{HUSKIES_HOME}/generated/{state}/interesting/enacted_plan.geojson', driver='GeoJSON')
 def analyze_enacted_all():
     analyze_enacted("GA")

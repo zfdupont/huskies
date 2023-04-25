@@ -1,8 +1,6 @@
 import pymongo
 import gridfs
-import pandas as pd
 import geopandas as gpd
-from bson import json_util, ObjectId
 import json
 from settings import DATABASE_URI
 

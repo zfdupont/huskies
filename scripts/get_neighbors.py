@@ -4,30 +4,30 @@ from gerrychain import Graph
 from networkx import connected_components
 from settings import HUSKIES_HOME
 def get_precincts(path):
-    gdf = gpd.read_file(path)
+    precincts = gpd.read_file(path)
     FEET_CRS = "epsg:2248"
-    gdf = gdf.to_crs(FEET_CRS)
-    return gdf
-def find_neighbors(gdf):
+    precincts = precincts.to_crs(FEET_CRS)
+    return precincts
+def find_neighbors(precincts):
     idx = index.Index()
-    for i, geometry in enumerate(gdf.geometry):
+    for i, geometry in enumerate(precincts.geometry):
         idx.insert(i, geometry.bounds)
     neighbors = {}
-    for i, polygon in enumerate(gdf.geometry):
+    for i, polygon in enumerate(precincts.geometry):
         bounds = polygon.bounds
         intersecting = list(idx.intersection(bounds))
         neighbors[i] = set()
         for j in intersecting:
             if i != j:
-                other_polygon = gdf.iloc[j].geometry
+                other_polygon = precincts.iloc[j].geometry
                 NEIGHBOR_DISTANCE_MAX = 200
                 if polygon.distance(other_polygon) < NEIGHBOR_DISTANCE_MAX:
                     neighbors[i].add(j)
     return neighbors
-def make_graph(neighbors, path, gdf):
+def make_graph(neighbors, path, precincts):
     graph = Graph(neighbors)
-    graph.add_data(gdf)
-    graph.geometry = gdf.geometry
+    graph.add_data(precincts)
+    graph.geometry = precincts.geometry
     components = list(connected_components(graph))
     biggest_component_size = max(len(c) for c in components)
     islands = [c for c in components if len(c) != biggest_component_size]
@@ -37,12 +37,12 @@ def make_graph(neighbors, path, gdf):
     graph.to_json(path, include_geometries_as_geojson=True)
 def neighbors(state):
     statePath = f'{HUSKIES_HOME}/generated/{state}/preprocess/'
-    gdf = get_precincts(f'{statePath}merged{state}P.geojson')
-    neighbors = find_neighbors(gdf)
-    make_graph(neighbors, f'{statePath}graph{state}.json', gdf)
-    gdf = get_precincts(f'{statePath}merged{state}P20.geojson')
-    neighbors = find_neighbors(gdf)
-    make_graph(neighbors, f'{statePath}graph{state}20.json', gdf)
+    precincts = get_precincts(f'{statePath}merged{state}P.geojson')
+    neighbors = find_neighbors(precincts)
+    make_graph(neighbors, f'{statePath}graph{state}.json', precincts)
+    precincts_20 = get_precincts(f'{statePath}merged{state}P20.geojson')
+    neighbors = find_neighbors(precincts_20)
+    make_graph(neighbors, f'{statePath}graph{state}20.json', precincts_20)
 def neighbors_all():
     neighbors('NY')
     neighbors('GA')

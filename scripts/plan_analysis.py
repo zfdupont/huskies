@@ -1,5 +1,5 @@
 import geopandas as gpd
-from settings import HUSKIES_HOME, DATABASE_URI
+from settings import HUSKIES_HOME
 def calculate_differences(plan_20, plan_new, incumbent_mappings, changes):
     for incumbent in incumbent_mappings:
         id_20 = incumbent_mappings[incumbent]["id_20"]
