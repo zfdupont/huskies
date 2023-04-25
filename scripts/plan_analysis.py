@@ -18,7 +18,6 @@ def calculate_differences(plan_20, plan_new, incumbent_mappings, changes):
             incumbent_mappings[incumbent][change + "_variation"] = variation
 def precincts_to_districts(plan_new, path, state):
     precincts = gpd.read_file(path)
-    precincts = precincts.drop(columns='district_id_21')
     new_districts = [0 for x in range(len(precincts))]
     for i in plan_new.parts:
         for j in plan_new.parts[i]:
@@ -27,23 +26,29 @@ def precincts_to_districts(plan_new, path, state):
     precincts.set_geometry("geometry")
     if state == "NY":
         precincts = precincts.drop(7041)
-    new_districts = precincts.dissolve(by="district_id",aggfunc={key: 'sum' for key in filter(lambda x: x in "pop_total  vap_total  vap_white  vap_black  vap_native  vap_asian  vap_hwn  vap_other  vap_mixed  vap_hisp  republican  democrat".split(), list(precincts.columns))})
+    new_districts = precincts.dissolve(
+        by="district_id",
+        aggfunc={key: 'sum' for key in filter(lambda x: x in 
+                                              ["pop_total", "vap_total", "vap_white", "vap_black", 
+                                               "vap_native", "vap_asian", "vap_hwn", "vap_other", 
+                                               "vap_mixed", "vap_hisp", "republican", "democrat"], 
+                                               list(precincts.columns))})
     return new_districts
 def add_properties(new_districts, changes):
-    new_properties = ["incumbent_party"]
+    new_properties = {"incumbent_party"}
     for change in changes:
-        new_properties.append(change + "_common")
-        new_properties.append(change + "_added")
-        new_properties.append(change + "_lost")
-        new_properties.append(change + "_variation")
+        new_properties.add(change + "_common")
+        new_properties.add(change + "_added")
+        new_properties.add(change + "_lost")
+        new_properties.add(change + "_variation")
     new_districts["incumbent"] = None
     new_districts["winner_party"] = None
-    new_districts["safe_seat"] = False
     for property in new_properties:
         new_districts[property] = None
     new_districts = new_districts.reset_index(drop=True)
     return new_districts, new_properties
 def calc_safe_seats(new_districts):
+    new_districts["safe_seat"] = False
     for i in range(len(new_districts)):
         dem_votes = new_districts["democrat"][i]
         rep_votes = new_districts["republican"][i]
@@ -67,7 +72,10 @@ def fill_new_properties(new_districts, new_properties, incumbent_mappings):
 def analyze_plan(plan_20, plan_new, incumbent_mappings, state):
     changes = {"vap_total", "area", "vap_black", "vap_white", "vap_hisp","democrat", "republican"}
     calculate_differences(plan_20, plan_new, incumbent_mappings, changes)
-    new_districts = precincts_to_districts(plan_new, f'{HUSKIES_HOME}/generated/{state}/preprocess/merged{state}P.geojson', state)
+    new_districts = precincts_to_districts(
+        plan_new, 
+        f'{HUSKIES_HOME}/generated/{state}/preprocess/merged{state}P.geojson', 
+        state)
     new_districts, new_properties = add_properties(new_districts, changes)
     new_districts = calc_safe_seats(new_districts)
     new_districts = fill_new_properties(new_districts, new_properties, incumbent_mappings)

@@ -20,7 +20,8 @@ def analyze_seats(plan, incumbent_mappings, interesting_criteria, interesting_pl
     dem_winners, rep_winners = calculate_winners(plan, incumbent_mappings)
     dem_votes = sum(plan.graph.nodes[precinct]["democrat"] for precinct in plan.graph.nodes)
     rep_votes = sum(plan.graph.nodes[precinct]["republican"] for precinct in plan.graph.nodes)
-    seat_vote_difference = abs((dem_votes / (dem_votes + rep_votes)) - (dem_winners / (dem_winners + rep_winners)))
+    seat_vote_difference = abs((dem_votes / (dem_votes + rep_votes)) - 
+                               (dem_winners / (dem_winners + rep_winners)))
     if seat_vote_difference < interesting_criteria["fairest_seat_vote"]:
         interesting_criteria["fairest_seat_vote"] = seat_vote_difference
         interesting_plans["fair_seat_vote"] = plan
