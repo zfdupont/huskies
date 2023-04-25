@@ -17,7 +17,6 @@ class MongoEngine:
     def __init__(self, db_name, uri=DATABASE_URI):
         self.client = pymongo.MongoClient(uri, maxPoolSize=None)
         self.db = self.client[db_name]
-        self.fs = gridfs.GridFS(self.db)
 
     def insert_geodataframe(self, gdf : gpd.GeoDataFrame, collection_name : str , geojson_state : str, geojson_name : str):
         """
