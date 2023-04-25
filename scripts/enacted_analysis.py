@@ -31,14 +31,14 @@ def merge_into_districts(path, state):
     precincts.set_geometry("geometry")
     if state == "NY":
         precincts = precincts.drop(7041)
-    district_plan = precincts.dissolve(by="district_id_21",
+    enacted_districts = precincts.dissolve(by="district_id_21",
                        aggfunc={key: 'sum' for key in filter(lambda x: x in 
                                               ["pop_total", "vap_total", "vap_white", "vap_black", 
                                                "vap_native", "vap_asian", "vap_hwn", "vap_other", 
                                                "vap_mixed", "vap_hisp", "republican", "democrat"], 
                                                list(precincts.columns))})
-    return district_plan
-def addon_properties(new_districts, changes):
+    return enacted_districts
+def addon_properties(enacted_districts, changes):
     new_properties = set()
     for change in changes:
         new_properties.add(change + "_common")
@@ -46,17 +46,17 @@ def addon_properties(new_districts, changes):
         new_properties.add(change + "_lost")
         new_properties.add(change + "_variation")
     for property in new_properties:
-        new_districts[property] = None
-    new_districts = new_districts.reset_index(drop=True)
-    return new_districts, new_properties
-def fill_properties(new_districts, election_properties, district_data, new_properties, incumbent_mappings):
+        enacted_districts[property] = None
+    enacted_districts = enacted_districts.reset_index(drop=True)
+    return enacted_districts, new_properties
+def fill_properties(enacted_districts, election_properties, district_data, new_properties, incumbent_mappings):
     for district in district_data:
         for property in election_properties:
-            new_districts.loc[district, property] = district_data[district][property]
+            enacted_districts.loc[district, property] = district_data[district][property]
     for mapping in incumbent_mappings:
         for property in new_properties:
-            new_districts.loc[incumbent_mappings[mapping]['id_new'], property] = incumbent_mappings[mapping][property]
-    return new_districts
+            enacted_districts.loc[incumbent_mappings[mapping]['id_new'], property] = incumbent_mappings[mapping][property]
+    return enacted_districts
 def analyze_enacted(state):
     graph_21 = Graph.from_json(f'{HUSKIES_HOME}/generated/{state}/preprocess/graph{state}.json')
     plan_21 = GeographicPartition(graph_21, "district_id_21")
@@ -68,15 +68,15 @@ def analyze_enacted(state):
     incumbent_mappings = map_incumbents(plan_20, plan_21, incumbents)
     changes = {"vap_total", "area", "vap_black", "vap_white", "vap_hisp","democrat", "republican"}
     calculate_differences(plan_20, plan_21, incumbent_mappings, changes)
-    enacted_plan = merge_into_districts(f'{HUSKIES_HOME}/generated/{state}/preprocess/merged{state}P.geojson',
+    enacted_districts = merge_into_districts(f'{HUSKIES_HOME}/generated/{state}/preprocess/merged{state}P.geojson',
                                          state)
-    enacted_plan, new_properties = addon_properties(enacted_plan, changes)
+    enacted_districts, new_properties = addon_properties(enacted_districts, changes)
     election_properties = {"incumbent", "democrat_candidate", "republican_candidate",
                       "democrat_votes","republican_votes", "winner"}
-    enacted_plan = fill_properties(enacted_plan, election_properties, district_data, new_properties, incumbent_mappings)
+    enacted_districts = fill_properties(enacted_districts, election_properties, district_data, new_properties, incumbent_mappings)
     engine = MongoEngine('huskies', uri=DATABASE_URI)
-    engine.insert_geodataframe(enacted_plan, 'plans', state, "enacted")
-    #enacted_plan.to_file(f'{HUSKIES_HOME}/generated/{state}/interesting/enacted_plan.geojson', driver='GeoJSON')
+    #engine.insert_geodataframe(enacted_plan, 'plans', state, "enacted")
+    enacted_districts.to_file(f'{HUSKIES_HOME}/generated/{state}/interesting/enacted_plan.geojson', driver='GeoJSON')
 def analyze_enacted_all():
     analyze_enacted("GA")
     analyze_enacted("NY")
