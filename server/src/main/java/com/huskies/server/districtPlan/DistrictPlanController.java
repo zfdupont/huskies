@@ -1,6 +1,5 @@
 package com.huskies.server.districtPlan;
 
-import com.huskies.server.FeatureCollectionPOJO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.MediaType;
