@@ -5,22 +5,18 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 @Document("plans")
 @CompoundIndex( def = "{'state' : 1, 'name': 1}", unique = true)
 public class DistrictPlan {
-    @Id private ObjectId id;
-    @Indexed private String name;
+    private String name;
 
-    private FeatureCollectionPOJO geojson;
+    @Field("geojson")
+    private FeatureCollectionPOJO geoJSON;
     private String state;
 
-
     public DistrictPlan() {}
-
-    public DistrictPlan(String name) {
-        this.name = name;
-    }
 
     public String getName() {
         return name;
@@ -31,11 +27,11 @@ public class DistrictPlan {
     }
 
     public FeatureCollectionPOJO getGeoJson() {
-        return geojson;
+        return geoJSON;
     }
 
-    public void setGeoJson(FeatureCollectionPOJO geojson) {
-        this.geojson = geojson;
+    public void setGeoJson(FeatureCollectionPOJO geoJSON) {
+        this.geoJSON = geoJSON;
     }
 
     public String getState() {

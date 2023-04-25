@@ -41,7 +41,7 @@ class FeaturePOJO {
 public class FeatureCollectionPOJO {
     public String type;
 
-    public ArrayList<HashMap<String, Object>> features;
+    public ArrayList<Map<String, Object>> features;
 
     public FeatureCollectionPOJO() {}
 
