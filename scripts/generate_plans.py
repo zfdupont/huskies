@@ -12,17 +12,19 @@ def create_partitions(id, state, num_plans, recom_steps):
     pop_updater = {"population": updaters.Tally("pop_total", alias="population")}
     initial_partition = GeographicPartition(graph, assignment="district_id_21", updaters=pop_updater)
     ideal_population = sum(initial_partition["population"].values()) / len(initial_partition)
+    POP_PERCENT_ALLOWED = 0.05
+    NODE_REPEATS = 2
     proposal = partial(recom,
                     pop_col="pop_total",
                     pop_target=ideal_population,
-                    epsilon=0.05,
-                    node_repeats=2
+                    epsilon=POP_PERCENT_ALLOWED,
+                    node_repeats=NODE_REPEATS
                     )
+    CUT_EDGES_MULTIPLIER = 2
     compactness_bound = constraints.UpperBound(
         lambda p: len(p["cut_edges"]),
-        2*len(initial_partition["cut_edges"])
+        CUT_EDGES_MULTIPLIER*len(initial_partition["cut_edges"])
     )
-    POP_PERCENT_ALLOWED = 0.05
     pop_constraint = constraints.within_percent_of_ideal_population(initial_partition, POP_PERCENT_ALLOWED)
     plans = []
     for i in range(num_plans):

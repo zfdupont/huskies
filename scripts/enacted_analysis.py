@@ -11,7 +11,8 @@ def setup_district_data(state, election_results, plan_21):
                                "republican_votes":0, "winner":"D"} 
                      for district in plan_21.parts}
     for i in range(len(election_results)):
-        district = election_results["district"][i] - 1
+        DISTRICT_CORRECTION = -1
+        district = election_results["district"][i] + DISTRICT_CORRECTION
         if election_results["incumbent"][i] == True:
             district_data[district]["incumbent"] = election_results["name"][i]
         if election_results["party"][i] == "R":
@@ -29,8 +30,9 @@ def setup_district_data(state, election_results, plan_21):
 def merge_into_districts(path, state):
     precincts = gpd.read_file(path)
     precincts.set_geometry("geometry")
+    NY_PROBLEM_PRECINCT = 7041
     if state == "NY":
-        precincts = precincts.drop(7041)
+        precincts = precincts.drop(NY_PROBLEM_PRECINCT)
     enacted_districts = precincts.dissolve(by="district_id_21",
                        aggfunc={key: 'sum' for key in filter(lambda x: x in 
                                               ["pop_total", "vap_total", "vap_white", "vap_black", 
