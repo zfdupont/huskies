@@ -19,13 +19,8 @@ def get_ensemble(state):
     ensemble = [GeographicPartition(graph, a) for a in assignments]
     return ensemble
 def setup_box_w_data(num_incumbents):
-    properties = {"geo_variations",
-                  "pop_variations",
-                  "vap_white_proportions",
-                  "vap_black_proportions", 
-                  "vap_hisp_proportions",
-                  "democrat_proportions", 
-                  "republican_proportions"}
+    properties = {"geo_variations", "pop_variations", "vap_white_proportions","vap_black_proportions", 
+                  "vap_hisp_proportions","democrat_proportions", "republican_proportions"}
     box_w_data = dict()
     for property in properties:
         box_w_data[property] = [[] for x in range(num_incumbents)]
