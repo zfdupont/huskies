@@ -76,7 +76,7 @@ def calc_variations(plan_20, plan_new, incumbent_mappings):
         area_variation = area_added / area_total
         variation_data[incumbent]["geo_variations"] = area_variation
     return variation_data
-def calc_demographics(plan_20, plan_new, incumbent_mappings):
+def calc_demographics(plan_new, incumbent_mappings):
     demographics_needed = {"vap_black", "vap_white", "vap_hisp", "democrat", "republican"}
     demographic_data = {incumbent:{demographic + "_proportions":0 for demographic in demographics_needed} 
                         for incumbent in incumbent_mappings}
@@ -94,12 +94,10 @@ def calc_demographics(plan_20, plan_new, incumbent_mappings):
             proportion = demographic_sum / pop_sum
             demographic_data[incumbent][demographic + "_proportions"] = proportion
     return demographic_data
-def update_incumbent_summary(incumbent_summary_data, variation_data, demographic_data):
+def update_incumbent_summary(incumbent_summary_data, variation_data):
     for incumbent in incumbent_summary_data:
         for property in variation_data[incumbent]:
             incumbent_summary_data[incumbent][property].append(variation_data[incumbent][property])
-        for demographic in demographic_data[incumbent]:
-            incumbent_summary_data[incumbent][demographic].append(demographic_data[incumbent][demographic])
 def update_box_w_data(box_w_data, variation_data, demographic_data):
     box_w_lists = defaultdict(list)
     for incumbent in variation_data:
@@ -133,10 +131,7 @@ def analyze_ensemble(state):
     plan_20 = GeographicPartition(graph_20, assignment="district_id_20")
     winner_split = Counter()
     total_incumbent_winners = 0
-    incumbent_summary_data = {name:{"geo_variations":[], "pop_variations":[], "vap_black_proportions":[],
-                                    "vap_white_proportions":[],"vap_hisp_proportions":[],
-                                    "democrat_proportions":[], "republican_proportions":[]}
-                                    for name in incumbents["name"]}
+    incumbent_summary_data = {name:{"geo_variations":[], "pop_variations":[]} for name in incumbents["name"]}
     box_w_data = setup_box_w_data(len(incumbents))
     FAIR_SCORE_INIT, FAVORED_SCORE_INIT, VAR_SCORE_INIT = 1, -100, 0
     interesting_criteria = {"fairest_seat_vote":FAIR_SCORE_INIT,
@@ -152,8 +147,8 @@ def analyze_ensemble(state):
         winner_split[str(dem_winners) + "/" + str(rep_winners)] += 1
         total_incumbent_winners += incumbent_winners
         variation_data = calc_variations(plan_20, plan, incumbent_mappings)
-        demographic_data = calc_demographics(plan_20, plan, incumbent_mappings)
-        update_incumbent_summary(incumbent_summary_data, variation_data, demographic_data)
+        demographic_data = calc_demographics(plan, incumbent_mappings)
+        update_incumbent_summary(incumbent_summary_data, variation_data)
         update_box_w_data(box_w_data, variation_data, demographic_data)
         find_interesting_plans(plan_20, plan, incumbent_mappings, interesting_criteria, interesting_plans)
     find_quartiles(box_w_data)

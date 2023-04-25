@@ -11,9 +11,9 @@ def get_data(path, columns):
     data = pd.read_csv(path,low_memory=False)
     data = data[columns]
     return data
-def merge_data(bounds, column, data):
+def merge_data(precincts, column, data):
     for x in data:
-        precincts = x.merge(bounds,on=column,how='left')
+        precincts = x.merge(precincts,on=column,how='left')
     return precincts
 def assign_plan(precincts, path, label):
     districts = gpd.read_file(path)
