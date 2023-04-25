@@ -64,10 +64,10 @@ def calc_safe_seats(new_districts):
                 new_districts.loc[i, "safe_seat"] = True
     return new_districts
 def fill_new_properties(new_districts, new_properties, incumbent_mappings):
-    for mapping in incumbent_mappings:
-        new_districts.loc[incumbent_mappings[mapping]['id_new'], "incumbent"] = mapping
+    for incumbent in incumbent_mappings:
+        new_districts.loc[incumbent_mappings[incumbent]['id_new'], "incumbent"] = incumbent
         for property in new_properties:
-            new_districts.loc[incumbent_mappings[mapping]['id_new'], property] = incumbent_mappings[mapping][property]
+            new_districts.loc[incumbent_mappings[incumbent]['id_new'], property] = incumbent_mappings[incumbent][property]
     return new_districts
 def analyze_plan(plan_20, plan_new, incumbent_mappings, state):
     changes = {"vap_total", "area", "vap_black", "vap_white", "vap_hisp","democrat", "republican"}

@@ -54,9 +54,9 @@ def fill_properties(enacted_districts, election_properties, district_data, new_p
     for district in district_data:
         for property in election_properties:
             enacted_districts.loc[district, property] = district_data[district][property]
-    for mapping in incumbent_mappings:
+    for incumbent in incumbent_mappings:
         for property in new_properties:
-            enacted_districts.loc[incumbent_mappings[mapping]['id_new'], property] = incumbent_mappings[mapping][property]
+            enacted_districts.loc[incumbent_mappings[incumbent]['id_new'], property] = incumbent_mappings[incumbent][property]
     return enacted_districts
 def analyze_enacted(state):
     graph_21 = Graph.from_json(f'{HUSKIES_HOME}/generated/{state}/preprocess/graph{state}.json')
