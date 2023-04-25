@@ -32,15 +32,16 @@ def create_partitions(id, state, num_plans, recom_steps):
                 pop_constraint,
                 compactness_bound
             ],
-            accept=accept.always_accept, #what's this
+            accept=accept.always_accept,
             initial_state=initial_partition,
             total_steps=recom_steps
         )
-        for plan in chain: #have better explanation or find method to grab last partition
+        for plan in chain:
             pass
         plans.append(chain.state)
     assignments = [p.assignment for p in plans]
-    pickle.dump(assignments, open(f'{HUSKIES_HOME}/generated/{state}/assignments/assign_{state}_{str(id)}.p', 'wb'))
+    pickle.dump(assignments, 
+                open(f'{HUSKIES_HOME}/generated/{state}/assignments/assign_{state}_{str(id)}.p', 'wb'))
 def generate_plans(state, num_cores, total_plans, recom_steps):
     num_plans_per_core = math.ceil(total_plans / num_cores)
     args = [[i,state, num_plans_per_core, recom_steps] for i in range(num_cores)]
