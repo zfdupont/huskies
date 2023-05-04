@@ -4,17 +4,11 @@ def calculate_differences(plan_20, plan_new, incumbent_mappings, changes):
     for incumbent in incumbent_mappings:
         id_20 = incumbent_mappings[incumbent]["id_20"]
         id_new = incumbent_mappings[incumbent]["id_new"]
-        intersection = plan_20.parts[id_20].intersection(plan_new.parts[id_new])
+        precincts_added = plan_new.parts[id_new] - plan_20.parts[id_20]
         for change in changes:
-            common = sum(plan_20.graph.nodes[x][change] for x in intersection)
-            incumbent_mappings[incumbent][change + "_common"] = int(common)
-            tot_plan_20 = sum(plan_20.graph.nodes[x][change] for x in plan_20.parts[id_20])
-            tot_plan_new = sum(plan_new.graph.nodes[x][change] for x in plan_new.parts[id_new])
-            added = tot_plan_new - common
-            incumbent_mappings[incumbent][change + "_added"] = int(added)
-            lost = tot_plan_20 - common
-            incumbent_mappings[incumbent][change + "_lost"] = int(lost)
-            variation = added / (common + added)
+            added = sum(plan_20.graph.nodes[x][change] for x in precincts_added)
+            total = sum(plan_20.graph.nodes[x][change] for x in plan_20.parts[id_20])
+            variation = added / total
             incumbent_mappings[incumbent][change + "_variation"] = variation
 def precincts_to_districts(plan_new, path, state):
     precincts = gpd.read_file(path)
@@ -37,9 +31,6 @@ def precincts_to_districts(plan_new, path, state):
 def add_properties(new_districts, changes):
     new_properties = {"incumbent_party"}
     for change in changes:
-        new_properties.add(change + "_common")
-        new_properties.add(change + "_added")
-        new_properties.add(change + "_lost")
         new_properties.add(change + "_variation")
     new_districts["incumbent"] = None
     new_districts["winner_party"] = None
