@@ -15,7 +15,7 @@ def fill_plans(state, engine):
         interesting_plan = gpd.read_file(f'{geojsons_path}{criteria}_plan.geojson')
         engine.insert_geodataframe(interesting_plan, 'plans', state, criteria)
 def fill_database(state):
-    engine = MongoEngine('huskies', uri=DATABASE_URI)
+    engine = MongoEngine('dev', uri=DATABASE_URI)
     fill_ensemble_data(state, engine)
     fill_plans(state, engine)
 def fill_database_all():
