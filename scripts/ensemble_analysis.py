@@ -8,14 +8,16 @@ import multiprocessing
 from plan_analysis import analyze_plan
 from interesting_plan import find_interesting_plans
 from settings import HUSKIES_HOME
+import os
 from collections import defaultdict
 def get_ensemble(state):
     graph = Graph.from_json(f'{HUSKIES_HOME}/generated/{state}/preprocess/graph{state}.json')
     assignments = []
-    for i in range(multiprocessing.cpu_count()):
-        some_assignments = pickle.load(
-            open(f'{HUSKIES_HOME}/generated/{state}/assignments/assign_{state}_{str(i)}.p', 'rb'))
-        assignments += some_assignments
+    for path in os.listdir(f'{HUSKIES_HOME}/generated/{state}/assignments/'):
+        assignment_path = os.path.join(f'{HUSKIES_HOME}/generated/{state}/assignments/', path)
+        if os.path.isfile(assignment_path) and assignment_path.endswith('.p'):
+            with open(assignment_path, 'rb') as f:
+                assignments += pickle.load(f)
     ensemble = [GeographicPartition(graph, a) for a in assignments]
     return ensemble
 def setup_box_w_data(num_incumbents):

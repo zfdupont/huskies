@@ -18,8 +18,8 @@ pip install -r requirements.txt
 
 export DATABASE_URI="mongodb+srv://admin:admin@huskies.fwdwss9.mongodb.net/?retryWrites=true&w=majority"
 export HUSKIES_HOME="/gpfs/home/zdupont"
-export TOTAL_PLANS=500
-export RECOM_STEPS=100
+export TOTAL_PLANS=200
+export RECOM_STEPS=1000
 
 
 mkdir -p $HUSKIES_HOME/generated/GA/assignments
