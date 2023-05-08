@@ -1,6 +1,8 @@
 from settings import HUSKIES_HOME
 import geopandas as gpd
 import pandas as pd
+import json
+from collections import defaultdict
 from gerrychain import Graph, GeographicPartition
 from ensemble_analysis import map_incumbents
 from plan_analysis import calculate_differences
@@ -21,12 +23,17 @@ def setup_district_data(state, election_results, plan_21):
         else:
             district_data[district]["democrat_candidate"] = election_results["name"][i]
             district_data[district]["democrat_votes"] = int(election_results["votes"][i])
+    d_winners = 0
+    r_winners = 0
     for district in district_data:
         if district_data[district]["democrat_votes"] > district_data[district]["republican_votes"]:
             district_data[district]["winner_party"] = "D"
+            d_winners += 1
         else:
             district_data[district]["winner_party"] = "R"
-    return district_data
+            r_winners += 1
+    winner_split = str(d_winners) + "/" + str(r_winners)
+    return district_data, winner_split
 def merge_into_districts(path, state):
     precincts = gpd.read_file(path)
     precincts.set_geometry("geometry")
@@ -43,9 +50,6 @@ def merge_into_districts(path, state):
 def addon_properties(enacted_districts, changes):
     new_properties = set()
     for change in changes:
-        new_properties.add(change + "_common")
-        new_properties.add(change + "_added")
-        new_properties.add(change + "_lost")
         new_properties.add(change + "_variation")
     for property in new_properties:
         enacted_districts[property] = None
@@ -65,7 +69,7 @@ def analyze_enacted(state):
     graph_20 = Graph.from_json(f'{HUSKIES_HOME}/generated/{state}/preprocess/graph{state}20.json')
     plan_20 = GeographicPartition(graph_20, assignment="district_id_20")
     election_results = pd.read_csv(f'{HUSKIES_HOME}/data/{state}/election_results_{state}.csv')
-    district_data = setup_district_data(state, election_results, plan_21)
+    district_data, winner_split = setup_district_data(state, election_results, plan_21)
     incumbents = pd.read_csv(f'{HUSKIES_HOME}/data/{state}/incumbents_{state}.csv')
     incumbent_mappings = map_incumbents(plan_20, plan_21, incumbents)
     changes = {"vap_total", "area", "vap_black", "vap_white", "vap_hisp","democrat", "republican"}
@@ -76,6 +80,18 @@ def analyze_enacted(state):
     election_properties = {"incumbent", "democrat_candidate", "republican_candidate",
                       "democrat_votes","republican_votes", "winner"}
     enacted_districts = fill_properties(enacted_districts, election_properties, district_data, new_properties, incumbent_mappings)
+    incumbent_data = defaultdict(dict)
+    box_w_dots = defaultdict(list)
+    for incumbent in incumbent_mappings:
+        incumbent_data[incumbent]["area_variation"] = incumbent_mappings[incumbent]["area_variation"]
+        incumbent_data[incumbent]["vap_total_variation"] = incumbent_mappings[incumbent]["vap_total_variation"]
+        for change in changes:
+            box_w_dots[change + "_variation"].append(incumbent_mappings[incumbent][change + "_variation"])
+    for change in changes:
+        box_w_dots[change + "_variation"] = sorted(box_w_dots[change + "_variation"])
+    enacted_data = {"winner_split": winner_split, "box_w_dots": box_w_dots, "incumbent_data": incumbent_data}
+    with open(f'{HUSKIES_HOME}/generated/{state}/enacted_data.json', 'w') as outfile:
+        json.dump(enacted_data, outfile)
     enacted_districts.to_file(f'{HUSKIES_HOME}/generated/{state}/interesting/enacted_plan.geojson', driver='GeoJSON')
 def analyze_enacted_all():
     analyze_enacted("GA")
