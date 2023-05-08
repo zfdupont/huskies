@@ -5,7 +5,8 @@ import multiprocessing
 import pickle
 import math
 import random
-from settings import HUSKIES_HOME
+from settings import HUSKIES_HOME, TOTAL_PLANS, RECOM_STEPS
+
 def create_partitions(id, state, num_plans, recom_steps):
     random.seed(id)
     graph = Graph.from_json(f'{HUSKIES_HOME}/generated/{state}/preprocess/graph{state}.json')
@@ -56,8 +57,6 @@ def generate_plans(state, num_cores, total_plans, recom_steps):
         p.join()
 def generate_all_plans():
     num_cores = multiprocessing.cpu_count()
-    TOTAL_PLANS = 8
-    RECOM_STEPS = 20
     generate_plans("GA", num_cores, TOTAL_PLANS, RECOM_STEPS)
     generate_plans("NY", num_cores, TOTAL_PLANS, RECOM_STEPS)
     generate_plans("IL", num_cores, TOTAL_PLANS, RECOM_STEPS)

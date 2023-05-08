@@ -4,6 +4,7 @@ import pandas as pd
 from gerrychain import Graph, GeographicPartition
 from ensemble_analysis import map_incumbents
 from plan_analysis import calculate_differences
+
 def setup_district_data(state, election_results, plan_21):
     district_data = {district:{"incumbent":None, "democrat_candidate": "Democrat Candidate",
                                "republican_candidate": "Republican Candidate", "democrat_votes":0,
