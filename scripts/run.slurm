@@ -4,8 +4,7 @@
 #SBATCH --output=res.txt
 #SBATCH --time=48:00:00
 
-#SBATCH --nodes=4
-#SBATCH --cpus-per-task=20
+#SBATCH --nodes=16-38
 #SBATCH --ntasks-per-node=3
 #SBATCH --spread-job
 
