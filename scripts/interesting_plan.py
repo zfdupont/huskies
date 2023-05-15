@@ -40,10 +40,10 @@ def analyze_geo_pop_var(plan_20, plan_new, incumbent_mappings, interesting_crite
         id_new = incumbent_mappings[incumbent]["id_new"]
         precincts_added = plan_new.parts[id_new] - plan_20.parts[id_20]
         area_added = sum(plan_new.graph.nodes[precinct]['area'] for precinct in precincts_added)
-        area_total = sum(plan_new.graph.nodes[precinct]['area'] for precinct in plan_20.parts[id_20])
+        area_total = sum(plan_new.graph.nodes[precinct]['area'] for precinct in plan_new.parts[id_new])
         area_variation = area_added / area_total
         pop_added = sum(plan_new.graph.nodes[precinct]['vap_total'] for precinct in precincts_added)
-        pop_total = sum(plan_new.graph.nodes[precinct]['vap_total'] for precinct in plan_20.parts[id_20])
+        pop_total = sum(plan_new.graph.nodes[precinct]['vap_total'] for precinct in plan_new.parts[id_new])
         pop_variation = pop_added / pop_total
         total_geo_pop_var += area_variation + pop_variation
         if incumbent_mappings[incumbent]["incumbent_party"] == "D":

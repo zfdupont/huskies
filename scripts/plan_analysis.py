@@ -7,7 +7,7 @@ def calculate_differences(plan_20, plan_new, incumbent_mappings, changes):
         precincts_added = plan_new.parts[id_new] - plan_20.parts[id_20]
         for change in changes:
             added = sum(plan_20.graph.nodes[x][change] for x in precincts_added)
-            total = sum(plan_20.graph.nodes[x][change] for x in plan_20.parts[id_20])
+            total = sum(plan_20.graph.nodes[x][change] for x in plan_new.parts[id_new])
             variation = added / total
             incumbent_mappings[incumbent][change + "_variation"] = variation
 def precincts_to_districts(plan_new, path, state):
