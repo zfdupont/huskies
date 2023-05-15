@@ -41,6 +41,7 @@ def create_partitions(id, state, num_plans, recom_steps):
         for plan in chain:
             pass
         plans.append(chain.state)
+        print(id, i)
     assignments = [p.assignment for p in plans]
     pickle.dump(assignments, 
                 open(f'{HUSKIES_HOME}/generated/{state}/assignments/assign_{state}_{str(id)}.p', 'wb'))
@@ -55,9 +56,9 @@ def generate_plans(state, num_cores, total_plans, recom_steps):
     for p in processes:
         p.join()
 def generate_all_plans():
-    num_cores = multiprocessing.cpu_count()
-    TOTAL_PLANS = 8
-    RECOM_STEPS = 20
+    num_cores = 4
+    TOTAL_PLANS = 100
+    RECOM_STEPS = 300
     generate_plans("GA", num_cores, TOTAL_PLANS, RECOM_STEPS)
     generate_plans("NY", num_cores, TOTAL_PLANS, RECOM_STEPS)
     generate_plans("IL", num_cores, TOTAL_PLANS, RECOM_STEPS)

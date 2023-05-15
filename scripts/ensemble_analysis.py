@@ -4,7 +4,6 @@ import pandas as pd
 from collections import Counter
 import json
 import numpy as np
-import multiprocessing
 from plan_analysis import analyze_plan
 from interesting_plan import find_interesting_plans
 from settings import HUSKIES_HOME
@@ -12,7 +11,7 @@ from collections import defaultdict
 def get_ensemble(state):
     graph = Graph.from_json(f'{HUSKIES_HOME}/generated/{state}/preprocess/graph{state}.json')
     assignments = []
-    for i in range(multiprocessing.cpu_count()):
+    for i in range(4):
         some_assignments = pickle.load(
             open(f'{HUSKIES_HOME}/generated/{state}/assignments/assign_{state}_{str(i)}.p', 'rb'))
         assignments += some_assignments
@@ -73,7 +72,7 @@ def calc_variations(plan_20, plan_new, incumbent_mappings):
         precincts_added = plan_new.parts[id_new] - plan_20.parts[id_20]
         for property in properties:
             added = sum(plan_20.graph.nodes[x][property] for x in precincts_added)
-            total = sum(plan_20.graph.nodes[x][property] for x in plan_20.parts[id_20])
+            total = sum(plan_20.graph.nodes[x][property] for x in plan_new.parts[id_new])
             variation = added / total
             variation_data[incumbent][property + "_variations"] = variation
     return variation_data
