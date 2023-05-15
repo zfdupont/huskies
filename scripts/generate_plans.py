@@ -3,20 +3,34 @@ from gerrychain.proposals import recom
 from functools import partial
 import multiprocessing
 import logging
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ProcessPoolExecutor, as_completed
 from concurrent.futures.process import BrokenProcessPool
 import pickle
 import math
 import random
 from uuid import uuid4
-from time import time
-from settings import HUSKIES_HOME, TOTAL_PLANS, RECOM_STEPS
+import os
+from settings import HUSKIES_HOME, TOTAL_PLANS, RECOM_STEPS, NODE_COUNT
 
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 def create_partitions(id, state, num_plans, recom_steps):
+    def create_plans() -> GeographicPartition:
+        nonlocal proposal, pop_constraint, compactness_bound, initial_partition
+        chain = MarkovChain(
+            proposal=proposal,
+            constraints=[
+                pop_constraint,
+                compactness_bound
+            ],
+            accept=accept.always_accept,
+            initial_state=initial_partition,
+            total_steps=recom_steps
+        )
+        for plan in chain: pass
+        return chain.state
     random.seed(id)
     graph = Graph.from_json(f'{HUSKIES_HOME}/generated/{state}/preprocess/graph{state}.json')
     pop_updater = {"population": updaters.Tally("pop_total", alias="population")}
@@ -36,55 +50,34 @@ def create_partitions(id, state, num_plans, recom_steps):
         CUT_EDGES_MULTIPLIER*len(initial_partition["cut_edges"])
     )
     pop_constraint = constraints.within_percent_of_ideal_population(initial_partition, POP_PERCENT_ALLOWED)
-    plans = []
-    for _ in range(num_plans):
-        chain = MarkovChain(
-            proposal=proposal,
-            constraints=[
-                pop_constraint,
-                compactness_bound
-            ],
-            accept=accept.always_accept,
-            initial_state=initial_partition,
-            total_steps=recom_steps
-        )
-        for plan in chain: pass
-        plans.append(chain.state)
-    assignments = [p.assignment for p in plans]
-    pickle.dump(assignments, 
-                open(f'{HUSKIES_HOME}/generated/{state}/assignments/{state}_{id}.p', 'wb'))
-    return state
-def generate_plans(state, num_cores, total_plans, recom_steps):
-    num_plans_per_core = math.ceil(total_plans / num_cores)
-    
-    args = [[str(uuid4()),state, num_plans_per_core, recom_steps] for i in range(num_cores)]
-    processes = set()
-    for arg in args:
-        p = multiprocessing.Process(target=create_partitions, args=arg)
-        processes.add(p)
-        p.start()
-    for p in processes:
-        p.join()
-def generate_all_plans():
-    num_cores = multiprocessing.cpu_count()
-    num_plans_per_core = math.ceil(TOTAL_PLANS / num_cores)
-    
-    # generate_plans("GA", num_cores, TOTAL_PLANS, RECOM_STEPS)
-    # generate_plans("NY", num_cores, TOTAL_PLANS, RECOM_STEPS)
-    # generate_plans("IL", num_cores, TOTAL_PLANS, RECOM_STEPS)
-    
-    # Creates 5 times as many workers as available CPUs
-    with ThreadPoolExecutor() as exec:
-        try: 
+    assignments = []
+    with ProcessPoolExecutor as exec:
+        try:
             futures = [
-                exec.submit(create_partitions, args=[str(uuid4().hex), "GA", num_plans_per_core, RECOM_STEPS]),
-                exec.submit(create_partitions, args=[str(uuid4().hex), "NY", num_plans_per_core, RECOM_STEPS]), 
-                exec.submit(create_partitions, args=[str(uuid4().hex), "IL", num_plans_per_core, RECOM_STEPS])
+                exec.submit(create_plans) for _ in range(num_plans)
             ]
             for future in as_completed(futures):
-                logger.info(f"{num_plans_per_core} for {future.result()} completed!")
+                assignments.append(future.result().assignment)
+        except Exception as e:
+            logger.error("Error while creating plans for %s:", state, exc_info=1)
+            exit(-1)
+    pickle.dump(assignments, 
+                open(f'{HUSKIES_HOME}/generated/{state}/assignments/{state}_{id}.p', 'wb'))
+    logger.info("%s created in process %s", num_plans, os.getpid())
+
+def generate_all_plans():
+    num_cores = multiprocessing.cpu_count()
+    logger.info("num cores available: %s", num_cores)
+    with ProcessPoolExecutor(max_workers=3) as exec:
+        try: 
+            futures = [
+                exec.submit(create_partitions, str(uuid4().hex), "GA", TOTAL_PLANS, RECOM_STEPS),
+                exec.submit(create_partitions, str(uuid4().hex), "NY", TOTAL_PLANS, RECOM_STEPS),
+                exec.submit(create_partitions, str(uuid4().hex), "IL", TOTAL_PLANS, RECOM_STEPS),
+            ]
         except BrokenProcessPool as ex:
             logger.error(f"{ex} -- Limited System Resources")
+            exit(-1)
 if __name__ == '__main__':
     print("generating plans...")
     generate_all_plans()

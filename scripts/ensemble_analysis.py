@@ -4,12 +4,12 @@ import pandas as pd
 from collections import Counter
 import json
 import numpy as np
-import multiprocessing
 from plan_analysis import analyze_plan
 from interesting_plan import find_interesting_plans
 from settings import HUSKIES_HOME
 import os
 from collections import defaultdict
+
 def get_ensemble(state):
     graph = Graph.from_json(f'{HUSKIES_HOME}/generated/{state}/preprocess/graph{state}.json')
     assignments = []
@@ -20,6 +20,7 @@ def get_ensemble(state):
                 assignments += pickle.load(f)
     ensemble = [GeographicPartition(graph, a) for a in assignments]
     return ensemble
+
 def setup_box_w_data(num_incumbents):
     properties = {"area_variations", "vap_total_variations", "vap_white_variations","vap_black_variations", 
                   "vap_hisp_variations","democrat_variations", "republican_variations"}
@@ -27,6 +28,7 @@ def setup_box_w_data(num_incumbents):
     for property in properties:
         box_w_data[property] = [[] for x in range(num_incumbents)]
     return box_w_data
+
 def map_incumbents(plan_20, plan_new, incumbents):
     incumbent_mappings = dict()
     for i in range(len(incumbents)):
@@ -42,6 +44,7 @@ def map_incumbents(plan_20, plan_new, incumbents):
                 break
         incumbent_mappings[incumbents["name"][i]] = mapping
     return incumbent_mappings
+
 def calculate_split(plan, incumbent_mappings):
     precincts = plan.graph.nodes
     dem_winners = 0
@@ -63,6 +66,7 @@ def calculate_split(plan, incumbent_mappings):
                     incumbent_winners += 1
                     break
     return dem_winners, rep_winners, incumbent_winners
+
 def calc_variations(plan_20, plan_new, incumbent_mappings):
     properties = {"vap_total", "area", "vap_black", "vap_white", "vap_hisp", "democrat", "republican"}
     variation_data = {incumbent:{"vap_total_variations":0, "area_variations":0, "vap_black_variations":0,
@@ -79,10 +83,12 @@ def calc_variations(plan_20, plan_new, incumbent_mappings):
             variation = added / total
             variation_data[incumbent][property + "_variations"] = variation
     return variation_data
+
 def update_incumbent_summary(incumbent_summary_data, variation_data):
     for incumbent in incumbent_summary_data:
         incumbent_summary_data[incumbent]["area_variations"].append(variation_data[incumbent]["area_variations"])
         incumbent_summary_data[incumbent]["vap_total_variations"].append(variation_data[incumbent]["vap_total_variations"])
+
 def update_box_w_data(box_w_data, variation_data):
     box_w_lists = defaultdict(list)
     for incumbent in variation_data:
@@ -92,11 +98,13 @@ def update_box_w_data(box_w_data, variation_data):
         sorted_list = sorted(box_w_lists[property])
         for i in range(len(sorted_list)):
             box_w_data[property][i].append(sorted_list[i])
+
 def find_quartiles(box_w_data):
     for property in box_w_data:
         for i in range(len(box_w_data[property])):
             curr_list = box_w_data[property][i]
             box_w_data[property][i] = list(np.percentile(curr_list,[0,25,50,75,100]))
+
 def find_averages(incumbent_summary_data):
     total_geo_var = 0
     total_pop_var = 0
@@ -106,11 +114,13 @@ def find_averages(incumbent_summary_data):
         total_pop_var += sum(incumbent_summary_data[incumbent]["vap_total_variations"])
         var_count += len(incumbent_summary_data[incumbent]["area_variations"])
     return total_geo_var / var_count, total_pop_var / var_count
+
 def get_json(state):
     ensemble_data_path = f'{HUSKIES_HOME}/generated/{state}/enacted_data.json'
     with open(ensemble_data_path, 'r') as f:
         data = json.load(f)
     return data
+
 def analyze_ensemble(state):
     ensemble = get_ensemble(state)
     incumbents = pd.read_csv(f'{HUSKIES_HOME}/data/{state}/incumbents_{state}.csv')
@@ -137,6 +147,7 @@ def analyze_ensemble(state):
         update_incumbent_summary(incumbent_summary_data, variation_data)
         update_box_w_data(box_w_data, variation_data)
         find_interesting_plans(plan_20, plan, incumbent_mappings, interesting_criteria, interesting_plans)
+    
     find_quartiles(box_w_data)
     average_geo_var, average_pop_var = find_averages(incumbent_summary_data)
     ensemble_summary = {"num_plans": len(ensemble), 
@@ -157,9 +168,11 @@ def analyze_ensemble(state):
         interesting_plan.to_file(f'{HUSKIES_HOME}/generated/{state}/interesting/{criteria}_plan.geojson', driver='GeoJSON')
     with open(f'{HUSKIES_HOME}/generated/{state}/ensemble_data.json', 'w') as outfile:
         json.dump(state_data, outfile)
+
 def analyze_all():
     analyze_ensemble("GA")
     analyze_ensemble("NY")
     analyze_ensemble("IL")
+
 if __name__ == '__main__':
     analyze_all()
