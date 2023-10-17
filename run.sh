@@ -7,4 +7,5 @@ if [ -z "$(ls -A /path/to/dir)" ]; then
 	git clone https://github.com/zfdupont/huskies-client.git .
 fi
 npm install --force
-npm build
+npm run build
+serve -s build
