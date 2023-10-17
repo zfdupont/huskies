@@ -1,0 +1,3 @@
+[submodule "static/app"]
+	path = static/app
+	url = https://github.com/zfdupont/huskies-client
