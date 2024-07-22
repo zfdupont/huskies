@@ -1,6 +1,6 @@
 # Gerrymandering Analyzer
 
-Huskies is a Redistricting Analyzer that processes state census data, generates new redistricting plans, and serves them to users over an HTTP server. This tool aims to facilitate the analysis and creation of fair and effective redistricting plans.
+Huskies is a Redistricting Analyzer that processes state census data, generates new redistricting plans, and serves them to users over an HTTP server. This tool aims to facilitate the analysis and creation of fair and effective redistricting plans. Find the client code at https://github.com/zfdupont/huskies-client.
 
 ## Features
 
