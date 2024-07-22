@@ -11,7 +11,6 @@ import java.util.Arrays;
 
 @SpringBootApplication
 @EnableMongoRepositories(basePackages = { "com" })
-//@ComponentScan(basePackages = { "com" })
 public class ServerApplication {
 
 	public static void main(String[] args) {
@@ -24,7 +23,7 @@ public class ServerApplication {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/api/**")
-					.allowedOrigins("http://localhost:3000", "http://localhost:4173", "https://zfdupont.com")
+					.allowedOriginPatterns("http://localhost:[*]", "https://zfdupont.com:[*]")
 					.allowCredentials(true)
 					.maxAge(3600);
 			}
