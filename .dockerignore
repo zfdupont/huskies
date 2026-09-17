@@ -1,0 +1,14 @@
+.git
+.github
+target
+log
+*.md
+.env
+.env.*
+.idea
+.vscode
+.DS_Store
+scripts
+data
+static
+docs
