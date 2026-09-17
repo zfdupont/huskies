@@ -96,3 +96,4 @@ urllib3==1.26.13
 versioneer==0.28
 vit-pytorch==0.38.1
 wcwidth==0.2.5
+topojson
