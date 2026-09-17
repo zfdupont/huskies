@@ -20,5 +20,5 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/zfdupont/huskies-server:latest
+            ghcr.io/zfdupont/huskies-server:release
             ghcr.io/zfdupont/huskies-server:${{ github.sha }}
