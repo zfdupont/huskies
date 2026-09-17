@@ -63,7 +63,7 @@ To get started with Huskies, follow these steps:
 
 ## Usage
 
-Once the server is running, it will be accessible at `http://localhost:8000`. You can interact with the server using the provided API endpoints.
+Once the server is running, it will be accessible at `http://localhost:8090`. You can interact with the server using the provided API endpoints.
 
 ## API Endpoints
 ### GET /summary
@@ -174,7 +174,7 @@ The server can be configured using the `application.properties` file for the Spr
 
 ### application.properties (Spring server)
 ```
-server.port=8000
+server.port=8090
 logging.level.root=INFO
 ```
 
