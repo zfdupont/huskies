@@ -6,16 +6,29 @@ import json
 import numpy as np
 from plan_analysis import analyze_plan
 from interesting_plan import find_interesting_plans
+from graph_aliases import add_lowercase_aliases
 from settings import HUSKIES_HOME
 from collections import defaultdict
 def get_ensemble(state):
     graph = Graph.from_json(f'{HUSKIES_HOME}/generated/{state}/preprocess/graph{state}.json')
+    add_lowercase_aliases(graph)
     assignments = []
     for i in range(4):
         some_assignments = pickle.load(
             open(f'{HUSKIES_HOME}/generated/{state}/assignments/assign_{state}_{str(i)}.p', 'rb'))
         assignments += some_assignments
-    ensemble = [GeographicPartition(graph, a) for a in assignments]
+    # NY's assignments are labeled 1..26 (its district_id_21 seed was 1-indexed),
+    # while GA/IL are 0-based. Downstream (precincts_to_districts) leaves island
+    # precincts at label 0, so 1-based labels produce a phantom extra district.
+    # Normalize every plan to a 0-based labeling so islands fold into district 0,
+    # matching GA/IL behavior. No-op for already-0-based states.
+    ensemble = []
+    for a in assignments:
+        mapping = {node: a[node] for node in graph.nodes}
+        offset = min(mapping.values())
+        if offset:
+            mapping = {node: label - offset for node, label in mapping.items()}
+        ensemble.append(GeographicPartition(graph, mapping))
     return ensemble
 def setup_box_w_data(num_incumbents):
     properties = {"area_variations", "vap_total_variations", "vap_white_variations","vap_black_variations", 
@@ -112,6 +125,7 @@ def analyze_ensemble(state):
     ensemble = get_ensemble(state)
     incumbents = pd.read_csv(f'{HUSKIES_HOME}/data/{state}/incumbents_{state}.csv')
     graph_20 = Graph.from_json(f'{HUSKIES_HOME}/generated/{state}/preprocess/graph{state}20.json')
+    add_lowercase_aliases(graph_20)
     plan_20 = GeographicPartition(graph_20, assignment="district_id_20")
     winner_split = Counter()
     total_incumbent_winners = 0

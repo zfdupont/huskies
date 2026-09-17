@@ -9,13 +9,13 @@ from settings import HUSKIES_HOME
 def create_partitions(id, state, num_plans, recom_steps):
     random.seed(id)
     graph = Graph.from_json(f'{HUSKIES_HOME}/generated/{state}/preprocess/graph{state}.json')
-    pop_updater = {"population": updaters.Tally("pop_total", alias="population")}
+    pop_updater = {"population": updaters.Tally("POPTOT", alias="population")}
     initial_partition = GeographicPartition(graph, assignment="district_id_21", updaters=pop_updater)
     ideal_population = sum(initial_partition["population"].values()) / len(initial_partition)
     POP_PERCENT_ALLOWED = 0.05
     NODE_REPEATS = 2
     proposal = partial(recom,
-                    pop_col="pop_total",
+                    pop_col="POPTOT",
                     pop_target=ideal_population,
                     epsilon=POP_PERCENT_ALLOWED,
                     node_repeats=NODE_REPEATS

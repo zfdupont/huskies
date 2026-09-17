@@ -6,6 +6,7 @@ from collections import defaultdict
 from gerrychain import Graph, GeographicPartition
 from ensemble_analysis import map_incumbents
 from plan_analysis import calculate_differences
+from graph_aliases import add_lowercase_aliases, normalize_zero_indexed
 def setup_district_data(state, election_results, plan_21):
     district_data = {district:{"incumbent":None, "democrat_candidate": "Democrat Candidate",
                                "republican_candidate": "Republican Candidate", "democrat_votes":0,
@@ -64,8 +65,11 @@ def fill_properties(enacted_districts, election_properties, district_data, new_p
     return enacted_districts
 def analyze_enacted(state):
     graph_21 = Graph.from_json(f'{HUSKIES_HOME}/generated/{state}/preprocess/graph{state}.json')
+    add_lowercase_aliases(graph_21)
+    normalize_zero_indexed(graph_21, "district_id_21")
     plan_21 = GeographicPartition(graph_21, "district_id_21")
     graph_20 = Graph.from_json(f'{HUSKIES_HOME}/generated/{state}/preprocess/graph{state}20.json')
+    add_lowercase_aliases(graph_20)
     plan_20 = GeographicPartition(graph_20, assignment="district_id_20")
     election_results = pd.read_csv(f'{HUSKIES_HOME}/data/{state}/election_results_{state}.csv')
     district_data, winner_split = setup_district_data(state, election_results, plan_21)
