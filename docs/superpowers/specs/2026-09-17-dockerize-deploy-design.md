@@ -135,7 +135,7 @@ First-time host setup (once):
 3. `docker login ghcr.io -u zfdupont` (PAT with `read:packages`).
 4. `docker compose up -d`.
 
-Ongoing: push to `main` → CI builds/pushes the image → Watchtower pulls and
+Ongoing: push to `release` → CI builds/pushes the image → Watchtower pulls and
 restarts that service within the poll interval. No SSH step.
 
 ## Testing / verification

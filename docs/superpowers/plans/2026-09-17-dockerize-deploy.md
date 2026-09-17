@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Ship huskies-client and huskies-server as container images that auto-deploy to a single VPS on push to `main`.
+**Goal:** Ship huskies-client and huskies-server as container images that auto-deploy to a single VPS on push to `release`.
 
 **Architecture:** Each repo builds a multi-stage image via GitHub Actions and pushes to private GHCR. A `docker-compose.yml` in huskies-server runs the client (nginx serving the SPA + reverse-proxying `/api`), the server (Spring Boot), and Watchtower (auto-pulls updated images). Cloudflare terminates TLS; internal traffic is HTTP.
 
@@ -377,7 +377,7 @@ git commit -m "Add docker-compose stack (client, server, watchtower) + env templ
 
 **Interfaces:**
 - Consumes: the client `Dockerfile` (Task 1).
-- Produces: `ghcr.io/zfdupont/huskies-client:latest` on every push to `main`.
+- Produces: `ghcr.io/zfdupont/huskies-client:latest` on every push to `release`.
 
 - [ ] **Step 1: Create `.github/workflows/docker.yml`**
 
@@ -434,7 +434,7 @@ git commit -m "Add CI: build and push client image to GHCR on push to main"
 
 **Interfaces:**
 - Consumes: the server `Dockerfile` (Task 3).
-- Produces: `ghcr.io/zfdupont/huskies-server:latest` on every push to `main`.
+- Produces: `ghcr.io/zfdupont/huskies-server:latest` on every push to `release`.
 
 - [ ] **Step 1: Create `.github/workflows/docker.yml`**
 
