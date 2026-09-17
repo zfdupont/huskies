@@ -5,8 +5,10 @@ COPY server/pom.xml ./pom.xml
 COPY server/src ./src
 RUN mvn -q -B clean package -DskipTests
 
-FROM eclipse-temurin:17-jre-alpine
-RUN apk add --no-cache curl && adduser -D -u 1001 appuser
+FROM eclipse-temurin:17-jre
+RUN apt-get update && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/* \
+    && useradd -r -u 1001 appuser
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 USER appuser
