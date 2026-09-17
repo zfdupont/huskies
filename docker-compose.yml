@@ -1,0 +1,37 @@
+services:
+  server:
+    image: ghcr.io/zfdupont/huskies-server:latest
+    restart: unless-stopped
+    environment:
+      SPRING_DATA_MONGODB_URI: ${DATABASE_URI}
+    expose:
+      - "8090"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8090/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
+    labels:
+      com.centurylinklabs.watchtower.scope: "huskies"
+
+  client:
+    image: ghcr.io/zfdupont/huskies-client:latest
+    restart: unless-stopped
+    depends_on:
+      server:
+        condition: service_healthy
+    ports:
+      - "80:8080"
+    labels:
+      com.centurylinklabs.watchtower.scope: "huskies"
+
+  watchtower:
+    image: containrrr/watchtower
+    restart: unless-stopped
+    command: --scope huskies --interval 120 --cleanup
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${HOME}/.docker/config.json:/config.json:ro
+    labels:
+      com.centurylinklabs.watchtower.scope: "huskies"
