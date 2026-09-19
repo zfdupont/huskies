@@ -36,7 +36,7 @@ is a separate GerryChain data-generation process. The two meet only at the
     runtime win. (Provide a cache-eviction hook or accept process-restart to
     refresh after a pipeline reload.)
 
-- [ ] **H3. Avoid deserialize-then-reserialize of multi-MB GeoJSON on `/api/plan`.**
+- [x] **H3. Avoid deserialize-then-reserialize of multi-MB GeoJSON on `/api/plan`.** (done, branch `arch/cleanup-and-caching`; service projects only `geojson` and returns `Document.toJson()` as a raw string, controller serves it as `application/json`. `DistrictPlan`/`FeatureCollectionPOJO` retained solely as schema + `@CompoundIndex` definition. Verified end-to-end against a local MongoDB: correct JSON output, `NumberLong` emitted as a plain number, and a confirmed cache hit on repeat requests.)
   - Where: `DistrictPlanController.getPlan` → loads full `DistrictPlan` into
     `FeatureCollectionPOJO` (`ArrayList<Map<String,Object>>`), then Jackson
     reserializes on the way out.
