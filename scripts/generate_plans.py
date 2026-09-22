@@ -2,6 +2,7 @@ from gerrychain import(GeographicPartition, Graph, MarkovChain, updaters, constr
 from gerrychain.proposals import recom
 from functools import partial
 import multiprocessing
+import os
 import pickle
 import math
 import random
@@ -56,7 +57,9 @@ def generate_plans(state, num_cores, total_plans, recom_steps):
     for p in processes:
         p.join()
 def generate_all_plans():
-    num_cores = 4
+    # Size to the machine. Prefer the Slurm allocation when running on the
+    # cluster (seawulf_script.slurm), else all local cores, falling back to 4.
+    num_cores = int(os.environ.get("SLURM_CPUS_PER_TASK", 0)) or os.cpu_count() or 4
     TOTAL_PLANS = 100
     RECOM_STEPS = 300
     generate_plans("GA", num_cores, TOTAL_PLANS, RECOM_STEPS)

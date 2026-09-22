@@ -82,31 +82,31 @@ is a separate GerryChain data-generation process. The two meet only at the
 
 ## Lower impact
 
-- [ ] **L1. Remove dead `@EnableMongoRepositories` (or adopt repositories).**
+- [x] **L1. Remove dead `@EnableMongoRepositories` (or adopt repositories).** (done, branch `arch/cleanup-and-caching`; removed the annotation and its import from `ServerApplication`. Access stays on `MongoTemplate`; did not adopt repositories.)
   - Where: `ServerApplication` — no repository interfaces exist; all access is
     via `MongoTemplate`, so the annotation is inert.
   - Do: remove it, or migrate the two services to `MongoRepository` and drop the
     hand-built `Query`/`Criteria`.
 
-- [ ] **L2. Make `ObjectMapper` a static singleton.**
+- [x] **L2. Make `ObjectMapper` a static singleton.** (done, branch `arch/cleanup-and-caching`; both `Ensemble` and `FeatureCollectionPOJO` now hold a `private static final ObjectMapper MAPPER` reused by `toString()`.)
   - Where: `Ensemble.java:75` and `FeatureCollectionPOJO.java:51` construct
     `new ObjectMapper()` per `toString()` call.
   - Do: `private static final ObjectMapper` (thread-safe, expensive to build).
 
-- [ ] **L3. Index `states.name`.**
+- [x] **L3. Index `states.name`.** (done, branch `arch/cleanup-and-caching`; added `@Indexed` on `Ensemble.name`. `auto-index-creation=true` in `application.properties`, so the index is created on startup.)
   - Where: `EnsembleService` queries `states` by `name` only; `Ensemble` has no
     `@Indexed` (unlike `DistrictPlan`'s compound index).
   - Do: add `@Indexed` on `Ensemble.name` (auto-index-creation is on). Small
     collection, so low urgency.
 
-- [ ] **L4. Size plan generation to available cores.**
+- [x] **L4. Size plan generation to available cores.** (done, branch `arch/cleanup-and-caching`; `num_cores` now derives from `SLURM_CPUS_PER_TASK` when set, else `os.cpu_count()`, falling back to 4. Left the sequential per-state loop and process-per-core model as-is — the `multiprocessing.Pool` / state-overlap change was flagged "consider" and is a larger refactor.)
   - Where: `scripts/generate_plans.py:59` hardcodes `num_cores = 4`, and
     `generate_all_plans` runs the three states strictly sequentially.
   - Do: use `os.cpu_count()` (or the Slurm-allocated count from
     `seawulf_script.slurm`) and consider a `multiprocessing.Pool` for even load
     balancing; overlap states if cores allow.
 
-- [ ] **L5. Drop `allowCredentials(true)` from CORS.**
+- [x] **L5. Drop `allowCredentials(true)` from CORS.** (done, branch `arch/cleanup-and-caching`; removed `.allowCredentials(true)`. Kept the `allowedOriginPatterns` for localhost/zfdupont.com rather than broadening to `*` — the port-wildcard patterns need `allowedOriginPatterns`, and restricting origins is harmless without credentials.)
   - Where: `ServerApplication:27` — the API is read-only public data with no auth
     or cookies, so credentials mode (and the origin-pattern constraint it forces)
     is unnecessary.
