@@ -64,14 +64,14 @@ is a separate GerryChain data-generation process. The two meet only at the
     500, so controllers return typed `ResponseEntity<Ensemble>` /
     `<FeatureCollectionPOJO>` with no per-method boilerplate.
 
-- [ ] **M3. Split Docker dependency layer from source layer.**
+- [x] **M3. Split Docker dependency layer from source layer.** (done, branch `arch/cleanup-and-caching`; `COPY pom.xml` → `RUN mvn -B dependency:go-offline` → `COPY src` → `RUN mvn -B clean package -DskipTests`. Deliberately did **not** add `-o` to the final package step: `dependency:go-offline` does not reliably prefetch every artifact the `package`/repackage/surefire goals need, so forcing offline mode risks a broken build. Caching still holds — the go-offline layer is cached until `pom.xml` changes. Not verified with a live `docker build`: the local Docker daemon was not running.)
   - Where: `Dockerfile:4-6` copies `pom.xml` + `src`, then runs `mvn package` in
     one step, so any source edit re-downloads all dependencies.
   - Do: `COPY pom.xml` → `RUN mvn -B dependency:go-offline` → `COPY src` → `RUN
     mvn -B clean package -DskipTests -o`. Caches deps across code changes. Gets
     much smaller once H1 lands.
 
-- [ ] **M4. De-duplicate and fix the scripts Mongo engine.**
+- [x] **M4. De-duplicate and fix the scripts Mongo engine.** (done, branch `arch/cleanup-and-caching`; deleted `scripts/MongoEngine.py` and repointed the sole importer `scripts/tests/mongo_engine_test.py` to `from mongo_engine import MongoEngine`. Guarded `__init__` with an `_initialized` flag so the singleton connects once instead of reconnecting on every construction. Caveat: that ad-hoc test was already broken — it calls `insert_geodataframe` with 3 args where 4 are required and hardcodes an absolute geojson path — and its two db-name constructions now collapse to the first, which is the intended singleton behavior; left otherwise as-is.)
   - Where: `scripts/mongo_engine.py` (used) vs `scripts/MongoEngine.py` (stale
     near-duplicate).
   - Do: delete the capitalized copy. Also fix the singleton: `__new__` returns a
