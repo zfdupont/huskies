@@ -8,7 +8,7 @@ print()
 sys.path.append(str(Path(__file__).parent.parent))
 
 import settings
-from MongoEngine import MongoEngine
+from mongo_engine import MongoEngine
 # Create a sample GeoDataFrame
 
 

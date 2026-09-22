@@ -1,7 +1,10 @@
 # syntax=docker/dockerfile:1
 FROM maven:3.9-eclipse-temurin-17 AS build
 WORKDIR /app
+# Resolve dependencies in their own layer so a source-only change doesn't
+# re-download the whole dependency tree; this layer is cached until pom.xml changes.
 COPY server/pom.xml ./pom.xml
+RUN mvn -q -B dependency:go-offline
 COPY server/src ./src
 RUN mvn -q -B clean package -DskipTests
 

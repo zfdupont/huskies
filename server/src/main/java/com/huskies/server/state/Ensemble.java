@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -12,6 +13,9 @@ import java.util.Map;
 
 @Document("states")
 public class Ensemble {
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
+    @Indexed
     private String name;
     @Field("ensemble_summary")
     @JsonProperty("ensemble_summary")
@@ -72,7 +76,7 @@ public class Ensemble {
     @Override
     public String toString() {
         try {
-            return new ObjectMapper().writeValueAsString(this);
+            return MAPPER.writeValueAsString(this);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
