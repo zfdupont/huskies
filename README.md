@@ -24,7 +24,7 @@ Huskies is a Redistricting Analyzer that processes state census data, generates 
 The repository is divided into two main sections:
 
 1. **server:** Contains a Spring HTTP server that serves plans and ensemble summaries from the database. It performs no calculations.
-2. **scripts:** Handles all the calculations, generates new plans, and makes POST requests to the database after generating plans.
+2. **scripts:** Handles all the calculations, generates new plans, and writes the results directly into MongoDB (via `fill_database.py`).
 
 ## Installation
 
@@ -56,9 +56,11 @@ To get started with Huskies, follow these steps:
    ```
 
 4. **Run the scripts:**
+   The pipeline stages are standalone entry points run from within `scripts/`, e.g.:
    ```
    cd scripts
-   python main.py
+   python generate_plans.py   # generate ensembles
+   python fill_database.py     # load plans + summaries into MongoDB
    ```
 
 ## Usage
@@ -66,12 +68,16 @@ To get started with Huskies, follow these steps:
 Once the server is running, it will be accessible at `http://localhost:8090`. You can interact with the server using the provided API endpoints.
 
 ## API Endpoints
-### GET /summary
+
+The server is read-only. All endpoints are GET under `/api`; plans and summaries are
+written into MongoDB by the `scripts/` pipeline, not through the API.
+
+### GET /api/summary
 Retrieve the ensemble summary for a specified state.
 
 #### Request
 ```
-GET /summary?state=StateName
+GET /api/summary?state=StateName
 ```
 
 #### Response
@@ -87,54 +93,32 @@ GET /summary?state=StateName
     "party2": count2,
     ...
   },
-  "box_whiskers_data": {...},
+  "box_w_data": {...},
   "incumbent_data": {...}
 }
 ```
 
-### GET /plans
-Retrieve all generated plans.
+### GET /api/plan
+Retrieve a single redistricting plan's geometry, by state and plan name. The response
+body is the plan's stored GeoJSON `FeatureCollection` served as-is (not wrapped).
 
-#### Response
+#### Request
 ```
-[
-  {
-    "id": "plan_id_1",
-    "name": "Plan 1",
-    "state": "StateName",
-    "geoJson": {
-      ...
-    }
-  },
-  ...
-]
+GET /api/plan?state=StateName&plan=PlanName
 ```
 
-### POST /plans
-Add a new redistricting plan to the server.
-
-#### Request Body
-```
-{
-  "name": "New Plan",
-  "state": "StateName",
-  "geoJson": {
-    ...
-  }
-}
-```
+`plan` is one of the pipeline-generated names: `enacted`, `democrat_favored`,
+`republican_favored`, `fair_seat_vote`, `fair_geo_pop_var`, `high_geo_pop_var`.
 
 #### Response
 ```
 {
-  "id": "new_plan_id",
-  "name": "New Plan",
-  "state": "StateName",
-  "geoJson": {
-    ...
-  }
+  "type": "FeatureCollection",
+  "features": [ ... ]
 }
 ```
+
+A request for a state/plan that does not exist returns `404`.
 
 ## Plan Generation
 To create district plans, we make use of GerryChain.
@@ -186,7 +170,7 @@ HUSKIES_HOME="path/to/scripts"
 
 - `server.port`: Port on which the Spring server will run.
 - `logging.level.root`: Logging level for the Spring server.
-- `DATABASE_URI`: URL of the database to which the scripts will POST data.
+- `DATABASE_URI`: MongoDB connection URI the scripts write generated data into.
 - `HUSKIES_HOME`: Directory where census data and generated plans will be stored.
 
 ## License

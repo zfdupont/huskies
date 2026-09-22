@@ -114,13 +114,19 @@ is a separate GerryChain data-generation process. The two meet only at the
 
 ## Notes / cross-cutting
 
-- Docs drift (not a code issue, but worth fixing while here): `README.md`
-  documents `GET/POST /plans` endpoints that the server does not implement, and
-  `server/META-INF/persistence.xml` is a vestigial unused JPA descriptor.
-- `application.properties:1` ships an `admin:admin` Atlas URI as the fallback
-  default. Overridden by env in compose (`SPRING_DATA_MONGODB_URI` ←
-  `DATABASE_URI`), but it is the live value for local `mvn spring-boot:run`.
-  Consider scrubbing the default to force explicit config.
+- [x] Docs drift (done, branch `arch/cleanup-and-caching`): rewrote the `README.md`
+  API section to the two real read-only endpoints (`GET /api/summary`,
+  `GET /api/plan`) and dropped the nonexistent `GET/POST /plans`; also corrected the
+  "scripts POST to the database" phrasing (they write to Mongo directly via
+  `fill_database.py`), the `python main.py` run step (no such file), and the
+  `DATABASE_URI` description. Deleted the vestigial JPA descriptors
+  `server/META-INF/persistence.xml` **and** `server/META-INF/orm.xml` (both empty, no
+  JPA references anywhere in `server/src`); the now-empty `META-INF` dir was removed.
+- [x] `application.properties` admin:admin fallback (done, branch
+  `arch/cleanup-and-caching`): replaced the `admin:admin@cluster0…` Atlas fallback with
+  a bare `mongodb://localhost:27017/huskies` default, so no credentials live in the repo
+  while local `spring-boot:run` still works against a local Mongo. Deployment still
+  injects `SPRING_DATA_MONGODB_URI` via compose.
 
 ## Suggested first branch
 
