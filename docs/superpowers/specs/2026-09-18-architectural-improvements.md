@@ -57,7 +57,7 @@ is a separate GerryChain data-generation process. The two meet only at the
   - Do: delete both explicit `spring-data-mongodb` declarations and the
     `jackson-annotations` pin; let the parent BOM govern.
 
-- [ ] **M2. Centralize error handling in a `@RestControllerAdvice`.**
+- [x] **M2. Centralize error handling in a `@RestControllerAdvice`.** (done, branch `arch/cleanup-and-caching`; added `GlobalExceptionHandler` in `com.huskies.server` mapping `ResourceNotFoundException` → 404 and `Exception` → 500. `EnsembleController` now returns typed `ResponseEntity<Ensemble>`; `DistrictPlanController` keeps `ResponseEntity<String>` — H3 already made `/api/plan` serve raw GeoJSON, so the `FeatureCollectionPOJO` note below is stale. Both controllers shed their try-catch. Behavior preserved: `ResourceNotFoundException` carries no message, so a 404 body is still empty.)
   - Where: `EnsembleController` and `DistrictPlanController` repeat the same
     404/500 try-catch around raw untyped `ResponseEntity`.
   - Do: one handler mapping `ResourceNotFoundException` → 404 and `Exception` →
