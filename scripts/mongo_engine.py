@@ -13,8 +13,15 @@ class MongoEngine:
         return cls._instance
 
     def __init__(self, db_name, uri=DATABASE_URI):
+        # __new__ hands back the cached instance, but __init__ still runs on every
+        # construction. Guard it so the client connects once; later calls (e.g.
+        # fill_database builds this 4x) reuse the same connection instead of
+        # reconnecting and rebinding the db.
+        if getattr(self, "_initialized", False):
+            return
         self.client = pymongo.MongoClient(uri, maxPoolSize=None)
         self.db = self.client[db_name]
+        self._initialized = True
 
     def insert_geodataframe(self, gdf : gpd.GeoDataFrame, collection_name : str , geojson_state : str, geojson_name : str):
         """

@@ -39,6 +39,8 @@ class FeaturePOJO {
     }
 }
 public class FeatureCollectionPOJO {
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
     public String type;
 
     public ArrayList<Map<String, Object>> features;
@@ -48,7 +50,7 @@ public class FeatureCollectionPOJO {
     @Override
     public String toString() {
         try {
-            return new ObjectMapper().writeValueAsString(this);
+            return MAPPER.writeValueAsString(this);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

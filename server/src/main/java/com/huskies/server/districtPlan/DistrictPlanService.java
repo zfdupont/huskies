@@ -1,6 +1,8 @@
 package com.huskies.server.districtPlan;
 
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -13,10 +15,17 @@ public class DistrictPlanService {
     private MongoTemplate mongoTemplate;
 
 
-    public DistrictPlan getDistrictPlan(String state, String name){
+    // Project only the stored GeoJSON subdocument and hand it back as a raw JSON
+    // string. This avoids deserializing the multi-MB payload into a POJO and then
+    // re-serializing it on the way out; the string is cached ready-to-serve.
+    @Cacheable(value = "plans", key = "#state + ':' + #name")
+    public String getDistrictPlanGeoJson(String state, String name){
         Query query = new Query(Criteria.where("name").is(name).and("state").is(state));
-        final DistrictPlan plan = mongoTemplate.findOne(query, DistrictPlan.class);
-        if (plan == null) throw new ResourceNotFoundException();
-        return plan;
+        query.fields().include("geojson");
+        Document doc = mongoTemplate.findOne(query, Document.class, "plans");
+        if (doc == null || !(doc.get("geojson") instanceof Document geojson)) {
+            throw new ResourceNotFoundException();
+        }
+        return geojson.toJson();
     }
 }
