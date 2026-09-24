@@ -30,6 +30,8 @@ def percentile_of(value, samples):
 
 
 def histogram_50(samples):
+    # Samples are CLIPPED into the end bins (not dropped), so sum(counts) == len(samples) == n.
+    # A future switch to range-drop semantics would break that invariant.
     arr = np.clip(np.asarray(samples, dtype=float), HIST_RANGE[0], HIST_RANGE[1])
     counts, edges = np.histogram(arr, bins=HIST_BINS, range=HIST_RANGE)
     return {"bin_edges": [float(e) for e in edges], "counts": [int(c) for c in counts]}
