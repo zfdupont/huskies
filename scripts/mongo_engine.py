@@ -43,18 +43,11 @@ class MongoEngine:
         }
         collection.insert_one(geojson_document)
     
-    def update_ensemble(self, ensemble_data : dict):
-        """
-        Update the features of a GeoJSON document in the "states" collection based on the provided GeoDataFrame.
-
-        :param ensemble_name: Name of ensemble being updated
-        :param ensemble_data: Document containing new ensemble data
-        """ 
+    def update_ensemble(self, contract : dict):
+        """Upsert a contract document into the 'states' collection, keyed by meta.state."""
         collection = self.db['states']
-        ensemble_name = ensemble_data['name']
-        update = { '$set' : { k:v for k,v in ensemble_data.items()}}
-        query = { 'name': ensemble_name }
-        collection.update_one(query, update, upsert=True)
+        state = contract['meta']['state']
+        collection.update_one({'meta.state': state}, {'$set': contract}, upsert=True)
     
             
     def drop_collection(self, collection_name : str):
