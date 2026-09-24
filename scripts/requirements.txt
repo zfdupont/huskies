@@ -97,3 +97,4 @@ versioneer==0.28
 vit-pytorch==0.38.1
 wcwidth==0.2.5
 topojson
+jsonschema==4.21.1
