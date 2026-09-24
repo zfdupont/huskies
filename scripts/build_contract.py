@@ -93,3 +93,21 @@ def transform_ensemble(ensemble_data, generated=None):
         },
         "metrics": {"by_incumbent": by_incumbent},
     }
+
+
+def build_contract_file(state):
+    """Read generated/<state>/ensemble_data.json, transform, write contract_<state>.json."""
+    import json
+    from settings import HUSKIES_HOME
+    with open(f"{HUSKIES_HOME}/generated/{state}/ensemble_data.json") as f:
+        ensemble_data = json.load(f)
+    contract = transform_ensemble(ensemble_data)
+    dst = f"{HUSKIES_HOME}/generated/{state}/contract_{state}.json"
+    with open(dst, "w") as f:
+        json.dump(contract, f)
+    return dst
+
+
+if __name__ == "__main__":
+    for _state in ("GA", "NY", "IL"):
+        print(build_contract_file(_state))

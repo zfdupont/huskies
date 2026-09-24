@@ -16,10 +16,10 @@ def simplify_for_display(gdf):
     return simplified.set_crs(crs, allow_override=True)
 
 def fill_ensemble_data(state, engine):
-    ensemble_data_path = f'{HUSKIES_HOME}/generated/{state}/ensemble_data.json'
-    with open(ensemble_data_path, 'r') as f:
-        ensemble_data = json.load(f)
-    engine.update_ensemble(ensemble_data)
+    contract_path = f'{HUSKIES_HOME}/generated/{state}/contract_{state}.json'
+    with open(contract_path, 'r') as f:
+        contract = json.load(f)
+    engine.update_ensemble(contract)
 def fill_plans(state, engine):
     geojsons_path = f'{HUSKIES_HOME}/generated/{state}/interesting/'
     interesting_criteria = {"enacted", "democrat_favored", "republican_favored",
@@ -33,9 +33,8 @@ def fill_database(state):
     fill_ensemble_data(state, engine)
     fill_plans(state, engine)
 def fill_database_all():
-    # plans are inserted (not upserted), so clear them first to avoid duplicates
-    # on a re-run. States use upsert and need no drop.
     MongoEngine('huskies', uri=DATABASE_URI).drop_collection('plans')
+    MongoEngine('huskies', uri=DATABASE_URI).drop_collection('states')
     fill_database("GA")
     fill_database("NY")
     fill_database("IL")
