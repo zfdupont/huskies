@@ -16,7 +16,7 @@ public class EnsembleService {
 
     @Cacheable("summaries")
     public Ensemble getSummary(String planName){
-        Query query = new Query(Criteria.where("name").is(planName));
+        Query query = new Query(Criteria.where("meta.state").is(planName));
         final Ensemble ensemble = mongoTemplate.findOne(query, Ensemble.class);
         if (ensemble == null) throw new ResourceNotFoundException();
         return ensemble;
