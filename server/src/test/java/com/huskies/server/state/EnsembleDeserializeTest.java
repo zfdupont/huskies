@@ -1,7 +1,11 @@
 package com.huskies.server.state;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.bson.Document;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
+import org.springframework.data.mongodb.core.convert.NoOpDbRefResolver;
+import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -47,5 +51,37 @@ class EnsembleDeserializeTest {
         String out = mapper.writeValueAsString(e);
         assertTrue(out.contains("\"observed_percentile\":0.75"));
         assertTrue(out.contains("\"by_incumbent\""));
+    }
+
+    // Reads the document through Spring Data's MongoDB mapper (the real /api/summary
+    // path, MongoTemplate.findOne). This is what Jackson's ObjectMapper test above
+    // does NOT exercise: Mongo maps BSON keys by field name unless @Field is present,
+    // so without @Field the snake_case keys (schema_version, num_plans, by_incumbent,
+    // observed_percentile, bin_edges) deserialize to null/0. This test fails without
+    // @Field on those fields.
+    @Test
+    void mapsFromMongoDocumentViaSpringData() {
+        MongoMappingContext ctx = new MongoMappingContext();
+        ctx.afterPropertiesSet();
+        MappingMongoConverter converter = new MappingMongoConverter(NoOpDbRefResolver.INSTANCE, ctx);
+        converter.afterPropertiesSet();
+
+        Ensemble e = converter.read(Ensemble.class, Document.parse(CONTRACT));
+
+        // The snake_case fields that were null/0 before @Field was added:
+        assertEquals("1.0", e.getSchemaVersion());
+        assertEquals(2, e.getSummary().getNumPlans());
+        assertEquals(1, e.getSummary().getNumIncumbents());
+        assertEquals(0.1, e.getSummary().getAvgGeoVar());
+        assertNotNull(e.getMetrics().getByIncumbent(), "by_incumbent must map from Mongo");
+        assertEquals(1, e.getMetrics().getByIncumbent().size());
+
+        Ensemble.Metric m = e.getMetrics().getByIncumbent().get(0).getMetrics().get(0);
+        assertEquals(0.75, m.getObservedPercentile());
+        assertEquals(3, m.getEnsemble().getHistogram().getBinEdges().size());
+
+        // meta (single-word keys) maps by field name either way
+        assertEquals("GA", e.getMeta().getState());
+        assertEquals(2, e.getMeta().getEnsemble().getSize());
     }
 }
