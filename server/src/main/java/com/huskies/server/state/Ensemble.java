@@ -3,6 +3,7 @@ package com.huskies.server.state;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Ensemble {
 
+    @Field("schema_version")
     @JsonProperty("schema_version")
     private String schemaVersion;
     private Meta meta;
@@ -54,11 +56,11 @@ public class Ensemble {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Summary {
-        @JsonProperty("num_plans") private int numPlans;
-        @JsonProperty("num_incumbents") private int numIncumbents;
-        @JsonProperty("avg_incumbent_winners") private double avgIncumbentWinners;
-        @JsonProperty("avg_geo_var") private double avgGeoVar;
-        @JsonProperty("avg_pop_var") private double avgPopVar;
+        @Field("num_plans") @JsonProperty("num_plans") private int numPlans;
+        @Field("num_incumbents") @JsonProperty("num_incumbents") private int numIncumbents;
+        @Field("avg_incumbent_winners") @JsonProperty("avg_incumbent_winners") private double avgIncumbentWinners;
+        @Field("avg_geo_var") @JsonProperty("avg_geo_var") private double avgGeoVar;
+        @Field("avg_pop_var") @JsonProperty("avg_pop_var") private double avgPopVar;
         public int getNumPlans() { return numPlans; }
         public void setNumPlans(int v) { this.numPlans = v; }
         public int getNumIncumbents() { return numIncumbents; }
@@ -73,7 +75,7 @@ public class Ensemble {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Metrics {
-        @JsonProperty("by_incumbent") private List<IncumbentMetrics> byIncumbent;
+        @Field("by_incumbent") @JsonProperty("by_incumbent") private List<IncumbentMetrics> byIncumbent;
         public List<IncumbentMetrics> getByIncumbent() { return byIncumbent; }
         public void setByIncumbent(List<IncumbentMetrics> v) { this.byIncumbent = v; }
     }
@@ -97,7 +99,7 @@ public class Ensemble {
         private String label;
         private String unit;
         private double observed;
-        @JsonProperty("observed_percentile") private double observedPercentile;
+        @Field("observed_percentile") @JsonProperty("observed_percentile") private double observedPercentile;
         private Distribution ensemble;
         public String getId() { return id; }
         public void setId(String id) { this.id = id; }
@@ -128,7 +130,7 @@ public class Ensemble {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Histogram {
-        @JsonProperty("bin_edges") private List<Double> binEdges;
+        @Field("bin_edges") @JsonProperty("bin_edges") private List<Double> binEdges;
         private List<Integer> counts;
         public List<Double> getBinEdges() { return binEdges; }
         public void setBinEdges(List<Double> v) { this.binEdges = v; }
