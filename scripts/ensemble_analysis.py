@@ -12,11 +12,15 @@ from collections import defaultdict
 def get_ensemble(state):
     graph = Graph.from_json(f'{HUSKIES_HOME}/generated/{state}/preprocess/graph{state}.json')
     add_lowercase_aliases(graph)
+    # Read every assignment pickle for the state (one per generator core), not a
+    # hardcoded 4 — so ensembles generated with any core count are fully consumed.
+    import glob
     assignments = []
-    for i in range(4):
-        some_assignments = pickle.load(
-            open(f'{HUSKIES_HOME}/generated/{state}/assignments/assign_{state}_{str(i)}.p', 'rb'))
-        assignments += some_assignments
+    pickle_paths = sorted(
+        glob.glob(f'{HUSKIES_HOME}/generated/{state}/assignments/assign_{state}_*.p'))
+    for path in pickle_paths:
+        with open(path, 'rb') as f:
+            assignments += pickle.load(f)
     # NY's assignments are labeled 1..26 (its district_id_21 seed was 1-indexed),
     # while GA/IL are 0-based. Downstream (precincts_to_districts) leaves island
     # precincts at label 0, so 1-based labels produce a phantom extra district.
