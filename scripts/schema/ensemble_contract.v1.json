@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://huskies/ensemble_contract.v1.json",
+  "title": "Ensemble Analysis Contract v1",
+  "type": "object",
+  "required": ["schema_version", "meta", "summary", "metrics"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "meta": {
+      "type": "object",
+      "required": ["state", "plan", "ensemble"],
+      "additionalProperties": false,
+      "properties": {
+        "state": { "type": "string" },
+        "plan": { "type": "string" },
+        "ensemble": {
+          "type": "object",
+          "required": ["size", "method", "generated"],
+          "additionalProperties": false,
+          "properties": {
+            "size": { "type": "integer", "minimum": 0 },
+            "method": { "type": "string" },
+            "generated": { "type": "string" }
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["num_plans", "num_incumbents", "avg_incumbent_winners", "avg_geo_var", "avg_pop_var"],
+      "additionalProperties": false,
+      "properties": {
+        "num_plans": { "type": "integer" },
+        "num_incumbents": { "type": "integer" },
+        "avg_incumbent_winners": { "type": "number" },
+        "avg_geo_var": { "type": "number" },
+        "avg_pop_var": { "type": "number" }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "required": ["by_incumbent"],
+      "additionalProperties": false,
+      "properties": {
+        "by_incumbent": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "name", "metrics"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string" },
+              "name": { "type": "string" },
+              "metrics": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["id", "label", "unit", "observed", "observed_percentile", "ensemble"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "id": { "type": "string" },
+                    "label": { "type": "string" },
+                    "unit": { "type": "string" },
+                    "observed": { "type": "number" },
+                    "observed_percentile": { "type": "number", "minimum": 0, "maximum": 1 },
+                    "ensemble": {
+                      "type": "object",
+                      "required": ["n", "quantiles", "histogram"],
+                      "additionalProperties": false,
+                      "properties": {
+                        "n": { "type": "integer", "minimum": 0 },
+                        "quantiles": {
+                          "type": "object",
+                          "required": ["0", "0.25", "0.5", "0.75", "1"],
+                          "additionalProperties": false,
+                          "properties": {
+                            "0": { "type": "number" }, "0.25": { "type": "number" },
+                            "0.5": { "type": "number" }, "0.75": { "type": "number" },
+                            "1": { "type": "number" }
+                          }
+                        },
+                        "histogram": {
+                          "type": "object",
+                          "required": ["bin_edges", "counts"],
+                          "additionalProperties": false,
+                          "properties": {
+                            "bin_edges": { "type": "array", "items": { "type": "number" }, "minItems": 51, "maxItems": 51 },
+                            "counts": { "type": "array", "items": { "type": "integer" }, "minItems": 50, "maxItems": 50 }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
